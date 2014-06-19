@@ -1,0 +1,87 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollViewNewSubscription"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="372dp"
+        tools:context="hr.fer.zari.waspmote.NewSubscriptionActivity"
+        tools:ignore="MergeRootFrame" >
+
+        <Spinner
+            android:id="@+id/GsnSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"            
+            android:tag="@string/SelectGSN" />
+
+        <EditText
+            android:id="@+id/periodEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/GsnSpinner"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="14dp"
+            android:ems="10"
+            android:inputType="number"
+            android:hint="@string/PeriodInMinutes" >
+
+            <requestFocus />
+        </EditText>
+
+        <ListView
+            android:id="@+id/SubscriptionSensorsListView"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/periodEditText" >
+        </ListView>
+        
+        <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:layout_below="@+id/SubscriptionSensorsListView"
+        android:orientation="horizontal">
+            
+        <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" >
+   		</View>
+   		
+        <Button
+            android:id="@+id/NewSubscriptionButton"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:text="@string/CreateSubscription2"
+            android:onClick="NewSubscriptionButtonClicked" />
+        
+        <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" >
+   		</View>
+   		
+        <Button
+            android:id="@+id/CancelSubscriptionButton"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:text="@string/CancelSubscription"
+            android:onClick="CancelSubscriptionButtonClicked" />
+        
+        <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" >
+   		</View>
+            
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>
+

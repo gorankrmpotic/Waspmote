@@ -1,0 +1,109 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollViewMain"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+<RelativeLayout
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="822dp"
+    tools:context="hr.fer.zari.waspmote.MainActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <Button
+        android:id="@+id/AdministrationButton"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:layout_alignLeft="@+id/InternalSensorsButton"
+        android:text="@string/Administration" 
+        android:onClick="AdministrationButtonClicked"/>
+
+    <Button
+        android:id="@+id/InternalSensorsButton"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/AdministrationButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"        
+        android:onClick="InternalSensorsButtonClicked"
+        android:text="@string/InternalSensors" />
+
+    <Button
+        android:id="@+id/ExternalSensorButton"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/InternalSensorsButton"
+        android:layout_below="@+id/InternalSensorsButton"
+        android:layout_marginTop="30dp"
+        android:text="@string/ExternalSensor" 
+        android:onClick="ExternalSensorButtonClicked"/>
+    
+    <Button
+        android:id="@+id/UsbSensorButton"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/ExternalSensorButton"
+        android:layout_marginTop="30dp"
+        android:text="@string/usb_sensor" 
+        android:onClick="UsbSensorButtonClicked"/>
+    
+    <Button
+        android:id="@+id/PlotSensorData"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/InternalSensorsButton"
+        android:layout_below="@+id/UsbSensorButton"
+        android:layout_marginTop="30dp"
+        android:text="@string/PlotSensorData" 
+        android:onClick="PlotSensorData"/>
+    
+    <Button
+        android:id="@+id/GSNButton"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/PlotSensorData"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/GSN" 
+        android:onClick="GSNButtonClicked"/>
+    
+    <Button
+        android:id="@+id/SubscriptionButton"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/GSNButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/Subscription" 
+        android:onClick="SubscriptionButtonClicked"/>
+    
+    <Button
+        android:id="@+id/DeleteDataButton"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/SubscriptionButton"
+        android:layout_marginTop="30dp"
+        android:text="@string/DeleteData" 
+        android:onClick="DeleteDataButtonClicked"/>
+
+    <Button
+        android:id="@+id/LogOutButton"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/ExternalSensorButton"
+        android:layout_below="@+id/DeleteDataButton"
+        android:layout_marginTop="30dp"
+        android:onClick="LogOutButtonClicked"
+        android:text="@string/LogOut" />
+
+    
+
+</RelativeLayout>
+</ScrollView>
+

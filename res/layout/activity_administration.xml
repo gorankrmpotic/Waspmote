@@ -1,0 +1,46 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollViewAdministration"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+<RelativeLayout
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="290dp"
+    tools:context="hr.fer.zari.waspmote.AdministrationActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <Button
+        android:id="@+id/CreateUserButton"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/CreateUser"
+        android:onClick="CreateUserButtonClicked" />
+
+    <Button
+        android:id="@+id/DeleteUserButton"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/CreateUserButton"
+        android:layout_alignLeft="@+id/CreateUserButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/DeleteUser" 
+        android:onClick="DeleteUserButtonClicked"/>
+
+    <Button
+        android:id="@+id/EditUserButton"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/DeleteUserButton"
+        android:layout_below="@+id/DeleteUserButton"
+        android:layout_marginTop="30dp"
+        android:text="@string/EditUser" 
+        android:onClick="EditUserButtonClicked"/>
+
+</RelativeLayout>
+</ScrollView>

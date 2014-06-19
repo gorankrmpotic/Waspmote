@@ -1,0 +1,100 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollViewNewGsn"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+    <RelativeLayout
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="290dp"
+    tools:context="hr.fer.zari.waspmote.NewGsnActivity"
+    tools:ignore="MergeRootFrame" >
+
+        <EditText
+            android:id="@+id/GsnNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"            
+            android:ems="10"
+            android:hint="@string/GsnName" >
+
+            <requestFocus />
+        </EditText>
+
+        <EditText
+            android:id="@+id/GsnIpEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/GsnNameEditText"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="14dp"
+            android:ems="10"
+            android:hint="@string/GsnIp" />
+
+        <EditText
+            android:id="@+id/GsnUsernameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/GsnIpEditText"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="@string/GsnUsername" />
+
+        <EditText
+            android:id="@+id/GsnPasswordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/GsnUsernameEditText"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="@string/GsnPassword"
+            android:inputType="textPassword" />
+
+        <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/GsnPasswordEditText"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+            
+        <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" >
+   		</View>
+        
+        
+        <Button
+            android:id="@+id/GsnCreateButton"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:text="@string/GsnCreate" 
+            android:onClick="GsnCreateButtonClicked"/>
+        
+        <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" >
+   		</View>
+
+        <Button
+            android:id="@+id/GsnCancelButton"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"         
+            android:text="@string/GsnCancel" 
+            android:onClick="GsnCancelButtonClicked"/>
+        
+        <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" >
+   		</View>
+        
+        </LinearLayout>
+    
+    </RelativeLayout>
+</ScrollView>
+

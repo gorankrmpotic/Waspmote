@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Waspmote App</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_log_in">LogInActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="Username">Username</string>
+    <string name="Password">Password</string>
+    <string name="LogIn">Log In</string>
+    <string name="Register">Register</string>
+    <string name="Exit">Exit</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Name">Name</string>
+    <string name="Surname">Surname</string>
+    <string name="RetypePassword">Retype Password</string>
+    <string name="Submit">Submit</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="InternalSensors">Internal Sensors</string>
+    <string name="title_activity_internal_sensors">InternalSensorsActivity</string>
+    <string name="Administration">Administration</string>
+    <string name="LogOut">Log Out</string>
+    <string name="title_activity_administration">AdministrationActivity</string>
+    <string name="CreateUser">Create User</string>
+    <string name="DeleteUser">Delete User</string>
+    <string name="EditUser">Edit User</string>
+    <string name="ExternalSensor">External Sensor</string>
+    <string name="title_activity_external_sensor">ExternalSensorActivity</string>
+    <string name="FindSensor">Find Sensor</string>
+    <string name="usb_sensor">Usb sensors</string>
+    <string name="title_activity_list_usb_sensors">Usb sensors</string>
+    <string name="Administrator">Administrator</string>
+    <string name="Guest">Guest</string>
+    <string name="TurnOffBluetooth">Turn Off Bluetooth</string>
+    <string name="CloseConnection">Close Connection</string>
+    <string name="GetData">Get Data</string>
+    <string name="title_activity_graph">GraphActivity</string>
+    <string name="PlotSensorData">View data</string>
+    <string name="LogInAsGuest">Log In As Guest</string>
+    <string name="GSN">GSN</string>
+    <string name="Subscription">Subscription</string>
+    <string name="title_activity_gsn">GsnActivity</string>
+    <string name="NewGsn">New GSN</string>
+    <string name="DeleteGsn">Delete GSN</string>
+    <string name="EditGsn">Edit GSN</string>
+    <string name="title_activity_subscription">SubscriptionActivity</string>
+    <string name="title_activity_new_gsn">NewGsnActivity</string>
+    <string name="GsnName">GSN Name</string>
+    <string name="GsnIp">GSN Ip</string>
+    <string name="GsnUsername">GSN Username</string>
+    <string name="GsnPassword">GSN Password</string>
+    <string name="GsnCreate">Create</string>
+    <string name="GsnCancel">Cancel</string>
+    <string name="CreateSubscription">Create Subscription</string>
+    <string name="DeleteSubscription">Delete Subscription</string>
+    <string name="EditSubscription">Edit Subscription</string>
+    <string name="title_activity_new_subscription">NewSubscriptionActivity</string>
+    <string name="SelectGSN">Select GSN</string>
+    <string name="PeriodInMinutes">Period In Minutes</string>
+    <string name="CreateSubscription2">Create</string>
+    <string name="CancelSubscription">Cancel</string>
+    <string name="DeleteData">Delete Data</string>
+
+</resources>

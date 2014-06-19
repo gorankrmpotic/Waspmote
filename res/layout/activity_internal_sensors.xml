@@ -1,0 +1,23 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="hr.fer.zari.waspmote.InternalSensorsActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <ListView
+        android:id="@+id/SensorsListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+    
+    <TextView
+        android:id="@+id/SensorNameTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:textSize="@dimen/abc_action_bar_title_text_size" 
+        android:padding="20dp"/>
+
+</FrameLayout>
+

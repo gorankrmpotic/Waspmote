@@ -1,0 +1,46 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollViewStart"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+<RelativeLayout
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="350dp"
+    tools:context="hr.fer.zari.waspmote.StartActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <Button
+        android:id="@+id/LogInAsGuest"
+        android:layout_width="155dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/LoginButton"
+        android:layout_below="@+id/LoginButton"
+        android:layout_marginTop="30dp"
+        android:onClick="LogInAsGuestButtonClicked"
+        android:text="@string/LogInAsGuest" />
+
+    <Button
+        android:id="@+id/LoginButton"
+        android:layout_width="155dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="105dp"
+        android:onClick="LogInButtonClicked"
+        android:text="@string/LogIn" />
+
+    <Button
+        android:id="@+id/ExitButton"
+        android:layout_width="155dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/LogInAsGuest"
+        android:layout_below="@+id/LogInAsGuest"
+        android:layout_marginTop="30dp"        
+        android:onClick="ExitButtonClicked"
+        android:text="@string/Exit"
+        android:textAlignment="center"/>
+
+</RelativeLayout>
+</ScrollView>

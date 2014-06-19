@@ -1,0 +1,109 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollViewRegister"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+<RelativeLayout
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="428dp"
+    tools:context="hr.fer.zari.waspmote.RegisterActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <EditText
+        android:id="@+id/NameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/Name" >
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/SurnameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/NameEditText"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:hint="@string/Surname" />
+
+    <EditText
+        android:id="@+id/RegisterUsernameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/SurnameEditText"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:hint="@string/Username" />
+
+    <EditText
+        android:id="@+id/RegisterPasswordEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/RegisterUsernameEditText"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:hint="@string/Password"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/RegisterRetypePasswordEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/RegisterPasswordEditText"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:hint="@string/RetypePassword"
+        android:inputType="textPassword" />
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/RegisterRetypePasswordEditText"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+        
+        <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" >
+   		</View>
+   		
+      	<Button
+        android:id="@+id/SubmitButton"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"           
+        android:onClick="SubmitButtonClicked"
+        android:text="@string/Submit"/>
+      	
+      	<View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" >
+   		</View>
+        
+   		<Button
+        android:id="@+id/RegisterCancelButton"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"    
+        android:onClick="RegisterCancelButtonClicked"
+        android:text="@string/Cancel"/>
+   		
+   		<View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" >
+    	</View>
+    
+    </LinearLayout>
+
+</RelativeLayout>
+</ScrollView>

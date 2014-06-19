@@ -1,0 +1,59 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollViewExternalSensor"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+<RelativeLayout
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="382dp"
+    tools:context="hr.fer.zari.waspmote.ExternalSensorActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <Button
+        android:id="@+id/FindSensorButton"
+        android:layout_width="175dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:onClick="FindSensorButtonClicked"
+        android:text="@string/FindSensor" />
+    
+    
+    <Button
+        android:id="@+id/GetExternalDataButton"
+        android:layout_width="175dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/FindSensorButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/GetData"
+        android:onClick="GetDataButtonClicked" />
+    
+    
+    <Button
+        android:id="@+id/CloseConnectionButton"
+        android:layout_width="175dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/GetExternalDataButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/CloseConnection"
+        android:onClick="CloseConnectionButtonClicked" />
+
+    <Button
+        android:id="@+id/TurnOffBTButton"
+        android:layout_width="175dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/CloseConnectionButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/TurnOffBluetooth" 
+        android:onClick="TurnOffBTButtonClicked"/>
+
+
+</RelativeLayout>
+</ScrollView>
+

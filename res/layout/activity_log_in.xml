@@ -1,0 +1,80 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollViewLog"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+<RelativeLayout android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="hr.fer.zari.waspmote.LogInActivity"
+    tools:ignore="MergeRootFrame">
+
+    <EditText
+        android:id="@+id/UsernameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:ems="10"
+        android:hint="@string/Username" />
+
+    <EditText
+        android:id="@+id/PasswordEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/UsernameEditText"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:hint="@string/Password"
+        android:inputType="textPassword" >
+        
+    </EditText>
+
+    <LinearLayout
+        android:layout_height="wrap_content" 
+		android:orientation="horizontal" 
+		android:layout_width="fill_parent" 
+		android:gravity="center"
+		android:layout_marginTop="24dp"
+		android:layout_below="@+id/PasswordEditText"  
+		android:layout_alignParentLeft="true">
+		
+        <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" >
+   		</View>
+   		
+    <Button
+        android:id="@+id/OkButton"
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"            
+        android:text="@android:string/ok" 
+        android:onClick="OkButtonClicked"/>
+    
+    	<View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" >
+   		</View>
+
+    <Button
+        android:id="@+id/CancelButton"
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"                    
+        android:text="@string/Cancel"
+        android:onClick="CancelButtonClicked" />
+    
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" >
+   		</View>
+    
+    </LinearLayout>
+
+</RelativeLayout>
+</ScrollView>
+

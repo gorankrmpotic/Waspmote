@@ -1,0 +1,46 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollViewSubscription"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+    <RelativeLayout
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="290dp"
+    tools:context="hr.fer.zari.waspmote.SubscriptionActivity"
+    tools:ignore="MergeRootFrame">
+
+        <Button
+            android:id="@+id/CreateSubscriptionButton"
+            android:layout_width="185dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="@string/CreateSubscription" 
+            android:onClick="CreateSubscriptionButtonClicked"/>
+
+        <Button
+            android:id="@+id/DeleteSubscriptionButton"
+            android:layout_width="185dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/CreateSubscriptionButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="@string/DeleteSubscription" 
+            android:onClick="DeleteSubscriptionButtonClicked"/>
+
+        <Button
+            android:id="@+id/EditSubscriptionButton"
+            android:layout_width="185dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/DeleteSubscriptionButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="@string/EditSubscription" 
+            android:onClick="EditSubscriptionButtonClicked"/>
+    
+    </RelativeLayout>
+</ScrollView>
+

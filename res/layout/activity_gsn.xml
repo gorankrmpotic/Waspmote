@@ -1,0 +1,49 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollViewGSN"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+    <RelativeLayout
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="290dp"
+    tools:context="hr.fer.zari.waspmote.GsnActivity"
+    tools:ignore="MergeRootFrame">
+
+        <Button
+            android:id="@+id/NewGsnButton"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="@string/NewGsn"
+            android:onClick="NewGsnButtonClicked" />
+
+        
+
+        <Button
+            android:id="@+id/DeleteGsnButton"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/NewGsnButton"
+            android:layout_below="@+id/NewGsnButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="@string/DeleteGsn"
+            android:onClick="DeleteGsnButtonClicked" />
+        
+        <Button
+            android:id="@+id/EditGsnButton"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/DeleteGsnButton"
+            android:layout_below="@+id/DeleteGsnButton"
+            android:layout_marginTop="30dp"
+            android:text="@string/EditGsn"
+            android:onClick="EditGsnButtonClicked" />
+    
+   	</RelativeLayout>
+</ScrollView>
+
