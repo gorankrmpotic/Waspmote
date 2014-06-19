@@ -30,6 +30,7 @@
     <string name="FindSensor">Find Sensor</string>
     <string name="usb_sensor">Usb sensors</string>
     <string name="title_activity_list_usb_sensors">Usb sensors</string>
+    <string name="title_activity_view_usb_device_data">Realtime Usb data</string>
     <string name="Administrator">Administrator</string>
     <string name="Guest">Guest</string>
     <string name="TurnOffBluetooth">Turn Off Bluetooth</string>

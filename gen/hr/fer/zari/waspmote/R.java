@@ -1084,7 +1084,8 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int ic_launcher=0x7f020057;
+        public static final int button_pattern=0x7f020057;
+        public static final int ic_launcher=0x7f020058;
     }
     public static final class id {
         public static final int AdministrationButton=0x7f060053;
@@ -1122,6 +1123,8 @@ containing a value of this type.
         public static final int OkButton=0x7f060050;
         public static final int PasswordEditText=0x7f06004f;
         public static final int PlotSensorData=0x7f060057;
+        public static final int ReadBytes=0x7f060088;
+        public static final int ReadValues=0x7f060089;
         public static final int RegisterCancelButton=0x7f060071;
         public static final int RegisterPasswordEditText=0x7f06006e;
         public static final int RegisterRetypePasswordEditText=0x7f06006f;
@@ -1145,6 +1148,9 @@ containing a value of this type.
         public static final int TurnOffBTButton=0x7f060045;
         public static final int UsbSensorButton=0x7f060056;
         public static final int UsernameEditText=0x7f06004e;
+        public static final int WriteButton=0x7f06008d;
+        public static final int WriteBytes=0x7f06008b;
+        public static final int WriteValues=0x7f06008c;
         public static final int action_bar=0x7f06001c;
         public static final int action_bar_activity_content=0x7f060015;
         public static final int action_bar_container=0x7f06001b;
@@ -1156,14 +1162,19 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f060016;
         public static final int action_menu_presenter=0x7f060017;
         public static final int action_mode_close_button=0x7f060024;
-        public static final int action_settings=0x7f06007b;
+        public static final int action_settings=0x7f06008f;
         public static final int activity_chooser_view_content=0x7f060025;
         public static final int always=0x7f06000b;
+        public static final int baudRate=0x7f06007e;
+        public static final int baudRateValue=0x7f06007f;
         public static final int beginning=0x7f060011;
-        public static final int checkBoxSensors=0x7f06007a;
+        public static final int checkBoxSensors=0x7f06008e;
         public static final int checkbox=0x7f06002d;
         public static final int collapseActionView=0x7f06000d;
+        public static final int configButton=0x7f06007d;
         public static final int container=0x7f06003d;
+        public static final int dataBit=0x7f060082;
+        public static final int dataBitValue=0x7f060083;
         public static final int default_activity_button=0x7f060028;
         public static final int dialog=0x7f06000e;
         public static final int disableHome=0x7f060008;
@@ -1172,6 +1183,8 @@ containing a value of this type.
         public static final int end=0x7f060013;
         public static final int expand_activities_button=0x7f060026;
         public static final int expanded_menu=0x7f06002c;
+        public static final int flowControl=0x7f060086;
+        public static final int flowControlValue=0x7f060087;
         public static final int home=0x7f060014;
         public static final int homeAsUp=0x7f060005;
         public static final int icon=0x7f06002a;
@@ -1183,11 +1196,17 @@ containing a value of this type.
         public static final int never=0x7f060009;
         public static final int none=0x7f060010;
         public static final int normal=0x7f060000;
+        public static final int openButton=0x7f06007a;
+        public static final int parity=0x7f060084;
+        public static final int parityValue=0x7f060085;
         public static final int periodEditText=0x7f060065;
         public static final int plot_sensor_data=0x7f060069;
+        public static final int portValue=0x7f06007c;
+        public static final int portnum=0x7f06007b;
         public static final int progress_circular=0x7f060018;
         public static final int progress_horizontal=0x7f060019;
         public static final int radio=0x7f06002f;
+        public static final int readEnButton=0x7f06008a;
         public static final int search_badge=0x7f060032;
         public static final int search_bar=0x7f060031;
         public static final int search_button=0x7f060033;
@@ -1203,6 +1222,8 @@ containing a value of this type.
         public static final int showHome=0x7f060004;
         public static final int showTitle=0x7f060006;
         public static final int split_action_bar=0x7f06001e;
+        public static final int stopBit=0x7f060080;
+        public static final int stopBitValue=0x7f060081;
         public static final int submit_area=0x7f060039;
         public static final int tabMode=0x7f060002;
         public static final int title=0x7f06002b;
@@ -1276,19 +1297,20 @@ containing a value of this type.
         public static final int activity_register=0x7f030023;
         public static final int activity_start=0x7f030024;
         public static final int activity_subscription=0x7f030025;
-        public static final int fragment_administration=0x7f030026;
-        public static final int fragment_external_sensor=0x7f030027;
-        public static final int fragment_gsn=0x7f030028;
-        public static final int fragment_internal_sensors=0x7f030029;
-        public static final int fragment_log_in=0x7f03002a;
-        public static final int fragment_main=0x7f03002b;
-        public static final int fragment_new_gsn=0x7f03002c;
-        public static final int fragment_new_subscription=0x7f03002d;
-        public static final int fragment_register=0x7f03002e;
-        public static final int fragment_start=0x7f03002f;
-        public static final int fragment_subscription=0x7f030030;
-        public static final int list_view_check_box=0x7f030031;
-        public static final int support_simple_spinner_dropdown_item=0x7f030032;
+        public static final int activity_view_usb_sensor_data=0x7f030026;
+        public static final int fragment_administration=0x7f030027;
+        public static final int fragment_external_sensor=0x7f030028;
+        public static final int fragment_gsn=0x7f030029;
+        public static final int fragment_internal_sensors=0x7f03002a;
+        public static final int fragment_log_in=0x7f03002b;
+        public static final int fragment_main=0x7f03002c;
+        public static final int fragment_new_gsn=0x7f03002d;
+        public static final int fragment_new_subscription=0x7f03002e;
+        public static final int fragment_register=0x7f03002f;
+        public static final int fragment_start=0x7f030030;
+        public static final int fragment_subscription=0x7f030031;
+        public static final int list_view_check_box=0x7f030032;
+        public static final int support_simple_spinner_dropdown_item=0x7f030033;
     }
     public static final class menu {
         public static final int administration=0x7f0d0000;
@@ -1306,48 +1328,48 @@ containing a value of this type.
     }
     public static final class string {
         public static final int Administration=0x7f0b001f;
-        public static final int Administrator=0x7f0b002a;
+        public static final int Administrator=0x7f0b002b;
         public static final int Cancel=0x7f0b0017;
-        public static final int CancelSubscription=0x7f0b0047;
-        public static final int CloseConnection=0x7f0b002d;
-        public static final int CreateSubscription=0x7f0b0040;
-        public static final int CreateSubscription2=0x7f0b0046;
+        public static final int CancelSubscription=0x7f0b0048;
+        public static final int CloseConnection=0x7f0b002e;
+        public static final int CreateSubscription=0x7f0b0041;
+        public static final int CreateSubscription2=0x7f0b0047;
         public static final int CreateUser=0x7f0b0022;
-        public static final int DeleteData=0x7f0b0048;
-        public static final int DeleteGsn=0x7f0b0036;
-        public static final int DeleteSubscription=0x7f0b0041;
+        public static final int DeleteData=0x7f0b0049;
+        public static final int DeleteGsn=0x7f0b0037;
+        public static final int DeleteSubscription=0x7f0b0042;
         public static final int DeleteUser=0x7f0b0023;
-        public static final int EditGsn=0x7f0b0037;
-        public static final int EditSubscription=0x7f0b0042;
+        public static final int EditGsn=0x7f0b0038;
+        public static final int EditSubscription=0x7f0b0043;
         public static final int EditUser=0x7f0b0024;
         public static final int Exit=0x7f0b0016;
         public static final int ExternalSensor=0x7f0b0025;
         public static final int FindSensor=0x7f0b0027;
-        public static final int GSN=0x7f0b0032;
-        public static final int GetData=0x7f0b002e;
-        public static final int GsnCancel=0x7f0b003f;
-        public static final int GsnCreate=0x7f0b003e;
-        public static final int GsnIp=0x7f0b003b;
-        public static final int GsnName=0x7f0b003a;
-        public static final int GsnPassword=0x7f0b003d;
-        public static final int GsnUsername=0x7f0b003c;
-        public static final int Guest=0x7f0b002b;
+        public static final int GSN=0x7f0b0033;
+        public static final int GetData=0x7f0b002f;
+        public static final int GsnCancel=0x7f0b0040;
+        public static final int GsnCreate=0x7f0b003f;
+        public static final int GsnIp=0x7f0b003c;
+        public static final int GsnName=0x7f0b003b;
+        public static final int GsnPassword=0x7f0b003e;
+        public static final int GsnUsername=0x7f0b003d;
+        public static final int Guest=0x7f0b002c;
         public static final int InternalSensors=0x7f0b001d;
         public static final int LogIn=0x7f0b0014;
-        public static final int LogInAsGuest=0x7f0b0031;
+        public static final int LogInAsGuest=0x7f0b0032;
         public static final int LogOut=0x7f0b0020;
         public static final int Name=0x7f0b0018;
-        public static final int NewGsn=0x7f0b0035;
+        public static final int NewGsn=0x7f0b0036;
         public static final int Password=0x7f0b0013;
-        public static final int PeriodInMinutes=0x7f0b0045;
-        public static final int PlotSensorData=0x7f0b0030;
+        public static final int PeriodInMinutes=0x7f0b0046;
+        public static final int PlotSensorData=0x7f0b0031;
         public static final int Register=0x7f0b0015;
         public static final int RetypePassword=0x7f0b001a;
-        public static final int SelectGSN=0x7f0b0044;
+        public static final int SelectGSN=0x7f0b0045;
         public static final int Submit=0x7f0b001b;
-        public static final int Subscription=0x7f0b0033;
+        public static final int Subscription=0x7f0b0034;
         public static final int Surname=0x7f0b0019;
-        public static final int TurnOffBluetooth=0x7f0b002c;
+        public static final int TurnOffBluetooth=0x7f0b002d;
         public static final int Username=0x7f0b0012;
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
          */
@@ -1394,16 +1416,17 @@ containing a value of this type.
         public static final int hello_world=0x7f0b000e;
         public static final int title_activity_administration=0x7f0b0021;
         public static final int title_activity_external_sensor=0x7f0b0026;
-        public static final int title_activity_graph=0x7f0b002f;
-        public static final int title_activity_gsn=0x7f0b0034;
+        public static final int title_activity_graph=0x7f0b0030;
+        public static final int title_activity_gsn=0x7f0b0035;
         public static final int title_activity_internal_sensors=0x7f0b001e;
         public static final int title_activity_list_usb_sensors=0x7f0b0029;
         public static final int title_activity_log_in=0x7f0b0010;
         public static final int title_activity_main=0x7f0b001c;
-        public static final int title_activity_new_gsn=0x7f0b0039;
-        public static final int title_activity_new_subscription=0x7f0b0043;
+        public static final int title_activity_new_gsn=0x7f0b003a;
+        public static final int title_activity_new_subscription=0x7f0b0044;
         public static final int title_activity_register=0x7f0b0011;
-        public static final int title_activity_subscription=0x7f0b0038;
+        public static final int title_activity_subscription=0x7f0b0039;
+        public static final int title_activity_view_usb_device_data=0x7f0b002a;
         public static final int usb_sensor=0x7f0b0028;
     }
     public static final class style {
@@ -1637,9 +1660,10 @@ containing a value of this type.
         public static final int Widget_AppCompat_Spinner_DropDown_ActionBar=0x7f0c0022;
     }
     public static final class xml {
-        public static final int line_point_formatter_with_plf1=0x7f050000;
-        public static final int line_point_formatter_with_plf2=0x7f050001;
-        public static final int line_point_formatter_with_plf3=0x7f050002;
+        public static final int device_filter=0x7f050000;
+        public static final int line_point_formatter_with_plf1=0x7f050001;
+        public static final int line_point_formatter_with_plf2=0x7f050002;
+        public static final int line_point_formatter_with_plf3=0x7f050003;
     }
     public static final class styleable {
         /**  ============================================ 
