@@ -101,16 +101,10 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 		if (null == ftDev) {
 			if (DevCount > 0) {
 				ftDev = ftdid2xx.openByIndex(usbDeviceContext, DevCount - 1);
-				//Toast.makeText(this, "DevCount = " + DevCount, Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "LISTA: otvara device = " + ftDev, Toast.LENGTH_SHORT).show();
 			} else {
-				Toast.makeText(this, "No devices found!", Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(this, "LISTA: No devices found!", Toast.LENGTH_SHORT).show();
 				onBackPressed();
-			}
-		} else {
-			synchronized (ftDev) {
-				ftDev = ftdid2xx.openByIndex(usbDeviceContext, DevCount - 1);
-				// Toast.makeText(this, "Was connected previously.", Toast.LENGTH_SHORT).show();
 			}
 		}
 
@@ -125,6 +119,14 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 		            //Toast.makeText(ListUsbSensorsActivity.this, "Pos. clocked: "+ i, Toast.LENGTH_LONG).show();
 		            Intent intent = new Intent(av.getContext(), ViewUsbSensorDataActivity.class);
 		            intent.putExtra("ClickedUsbIndex", i);
+		            ListUsbSensorsActivity.this.runOnUiThread(new Runnable() {
+	
+						@Override
+						public void run() {
+							Toast.makeText(getApplicationContext(), "Zovem usb close iz dretve: " +  Thread.currentThread().getName(), Toast.LENGTH_SHORT).show();
+							closeUsbDevice();
+						}
+					});
 		            startActivity(intent);
 		        }
 		    });
@@ -152,13 +154,24 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 	 */
 	private void closeUsbDevice() {
 		DevCount = -1;
-		if (ftDev != null) {
-			if (ftDev.isOpen()) {
-				Toast.makeText(this, "Lista - zatvaram usb", Toast.LENGTH_SHORT).show();
-				Log.d(TAG, "Closing usb device connection.");
-				ftDev.close();
+		if(ftDev != null)
+		{
+			synchronized(ftDev)
+			{
+				if(true == ftDev.isOpen())
+				{
+					Toast.makeText(this, "Closing usb in listed", Toast.LENGTH_SHORT).show();
+					Log.d(TAG, "Closing usb device connection.");
+					ftDev.close();
+				}
 			}
 		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		closeUsbDevice();
+		super.onDestroy();
 	}
 
 }
