@@ -270,6 +270,12 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		closeUsbDevice();
 		super.onPause();
 	}
+	
+	@Override
+	protected void onDestroy() {
+		closeUsbDevice();
+		super.onDestroy();
+	}
 
 	/* Implements all options listeners */
 
@@ -518,7 +524,6 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		Toast.makeText(this, "current: " + currentIndex+ "  \nopenIndex: " + openIndex, Toast.LENGTH_SHORT).show();
 		if (currentIndex != openIndex) {
 			if (null == ftDev) {
-				
 				ftDev = ftdid2xx.openByIndex(usbDeviceContext, openIndex);
 				Toast.makeText(this, "ftDev = " + ftDev, Toast.LENGTH_SHORT).show();
 			} else {
@@ -571,7 +576,6 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		currentIndex = -2;
 		bReadThreadGoing = false;
 		
-		
 		if(ftDev != null)
 		{
 			synchronized(ftDev)
@@ -586,6 +590,7 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		}
 	}
 	
+
 	public void EnableRead() {
 		iEnableReadFlag = (iEnableReadFlag + 1) % 2;
 
@@ -660,6 +665,7 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 					}
 				}
 			}
+			
 			synchronized (ftDev) {
 				if (ftDev.isOpen()) {
 					
