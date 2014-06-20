@@ -123,6 +123,14 @@ public class NewGsnActivity extends Activity {
 			emptyField.setPositiveButton("Ok", null);
 			emptyField.show();
 		}
+		else if(!gsnIpInput.getText().toString().contains(":"))
+		{
+			AlertDialog.Builder invalidPort = new AlertDialog.Builder(NewGsnActivity.this);
+			invalidPort.setTitle("Error");
+			invalidPort.setMessage("Ip address needs to have port divided by ':'");
+			invalidPort.setPositiveButton("Ok", null);
+			invalidPort.show();
+		}
 		else if(!editGsn.isEmpty())
 		{
 			//edit
@@ -137,6 +145,7 @@ public class NewGsnActivity extends Activity {
 			else
 			{
 				gsnData.updateGSN(gsnIpInput.getText().toString(), gsnNameInput.getText().toString(), gsnUsernameInput.getText().toString(), gsnPasswordInput.getText().toString(), editGsn);
+				finish();
 			}
 		}
 		else

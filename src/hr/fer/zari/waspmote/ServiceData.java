@@ -94,6 +94,18 @@ public class ServiceData implements Serializable {
 		return -1;
 	}
 	
+	public Sensors getSensorById(int id)
+	{
+		for(Sensors sens : sensors)
+		{
+			if(sens.get_id() == id)
+			{
+				return sens;
+			}
+		}
+		return null;
+	}
+	
 	public String getGsnIp() {
 		return gsnIp;
 	}

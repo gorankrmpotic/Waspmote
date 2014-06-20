@@ -14,6 +14,8 @@ import hr.fer.zari.waspmote.services.SensorMeasurementService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,6 +24,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.TaskStackBuilder;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -259,19 +262,40 @@ public class NewSubscriptionActivity extends Activity {
 								getBaseContext().startService(subsService);
 							}
 						}).start();	
-						new Thread(new Runnable() {							
+//						new Thread(new Runnable() {							
+//							@Override
+//							public void run() {
+//								// TODO Auto-generated method stub
+//								Intent subsService = new Intent(getBaseContext(), GsnService.class);						
+//								//ServiceData sd = new ServiceData(sensorsForService, period);
+//								ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
+//								Bundle bundle = new Bundle();
+//								bundle.putSerializable("ServiceData", sd);						
+//								subsService.putExtras(bundle);				
+//								getBaseContext().startService(subsService);
+//							}
+//						}).start();	
+						Timer timer = new Timer();
+						timer.schedule(new TimerTask() {
+							
 							@Override
 							public void run() {
 								// TODO Auto-generated method stub
-								Intent subsService = new Intent(getBaseContext(), GsnService.class);						
-								//ServiceData sd = new ServiceData(sensorsForService, period);
-								ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
-								Bundle bundle = new Bundle();
-								bundle.putSerializable("ServiceData", sd);						
-								subsService.putExtras(bundle);				
-								getBaseContext().startService(subsService);
+								new Thread(new Runnable() {							
+									@Override
+									public void run() {
+										// TODO Auto-generated method stub
+										Intent subsService = new Intent(getBaseContext(), GsnService.class);						
+										//ServiceData sd = new ServiceData(sensorsForService, period);
+										ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
+										Bundle bundle = new Bundle();
+										bundle.putSerializable("ServiceData", sd);						
+										subsService.putExtras(bundle);				
+										getBaseContext().startService(subsService);
+									}
+								}).start();	
 							}
-						}).start();	
+						}, 1000);
 						finish();
 					}			
 				}
@@ -362,19 +386,41 @@ public class NewSubscriptionActivity extends Activity {
 				}
 			}).start();	
 			
-			new Thread(new Runnable() {							
+//			new Thread(new Runnable() {							
+//				@Override
+//				public void run() {
+//					// TODO Auto-generated method stub
+//					Intent subsService = new Intent(getBaseContext(), GsnService.class);						
+//					//ServiceData sd = new ServiceData(sensorsForService, period);
+//					ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
+//					Bundle bundle = new Bundle();
+//					bundle.putSerializable("ServiceData", sd);						
+//					subsService.putExtras(bundle);				
+//					getBaseContext().startService(subsService);
+//				}
+//			}).start();	
+			
+			Timer timer = new Timer();
+			timer.schedule(new TimerTask() {
+				
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					Intent subsService = new Intent(getBaseContext(), GsnService.class);						
-					//ServiceData sd = new ServiceData(sensorsForService, period);
-					ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
-					Bundle bundle = new Bundle();
-					bundle.putSerializable("ServiceData", sd);						
-					subsService.putExtras(bundle);				
-					getBaseContext().startService(subsService);
+					new Thread(new Runnable() {							
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							Intent subsService = new Intent(getBaseContext(), GsnService.class);						
+							//ServiceData sd = new ServiceData(sensorsForService, period);
+							ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
+							Bundle bundle = new Bundle();
+							bundle.putSerializable("ServiceData", sd);						
+							subsService.putExtras(bundle);				
+							getBaseContext().startService(subsService);
+						}
+					}).start();	
 				}
-			}).start();	
+			}, 1000);
 			finish();
 		}	
 		}
@@ -434,12 +480,46 @@ public class NewSubscriptionActivity extends Activity {
 					sensorSubscriptionData.addSensorSubscription(idSubs, selectedSens.get_id());
 				}
 				final int period = Integer.parseInt(periodInput.getText().toString());
-//				new Thread(new Runnable() {
-//					
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						Intent subsService = new Intent(getBaseContext(), SensorMeasurementService.class);						
+						//ServiceData sd = new ServiceData(sensorsForService, period);
+						ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
+						Bundle bundle = new Bundle();
+						bundle.putSerializable("ServiceData", sd);						
+						subsService.putExtras(bundle);				
+						getBaseContext().startService(subsService);
+					}
+				}).start();	
+				Timer timer = new Timer();
+				timer.schedule(new TimerTask() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						new Thread(new Runnable() {							
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								Intent subsService = new Intent(getBaseContext(), GsnService.class);						
+								//ServiceData sd = new ServiceData(sensorsForService, period);
+								ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
+								Bundle bundle = new Bundle();
+								bundle.putSerializable("ServiceData", sd);						
+								subsService.putExtras(bundle);				
+								getBaseContext().startService(subsService);
+							}
+						}).start();	
+					}
+				}, 1000);
+//				new Thread(new Runnable() {							
 //					@Override
 //					public void run() {
 //						// TODO Auto-generated method stub
-//						Intent subsService = new Intent(getBaseContext(), SensorMeasurementService.class);						
+//						Intent subsService = new Intent(getBaseContext(), GsnService.class);						
 //						//ServiceData sd = new ServiceData(sensorsForService, period);
 //						ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
 //						Bundle bundle = new Bundle();
@@ -449,19 +529,6 @@ public class NewSubscriptionActivity extends Activity {
 //					}
 //				}).start();	
 				
-				new Thread(new Runnable() {							
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						Intent subsService = new Intent(getBaseContext(), GsnService.class);						
-						//ServiceData sd = new ServiceData(sensorsForService, period);
-						ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
-						Bundle bundle = new Bundle();
-						bundle.putSerializable("ServiceData", sd);						
-						subsService.putExtras(bundle);				
-						getBaseContext().startService(subsService);
-					}
-				}).start();	
 				finish();
 			}
 		}
