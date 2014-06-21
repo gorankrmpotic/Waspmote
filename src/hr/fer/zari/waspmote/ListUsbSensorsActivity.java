@@ -52,7 +52,12 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 			e.printStackTrace();
 		}
 
-		// * inflate views *
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
 		inflateDeviceList();
 	}
 
@@ -67,13 +72,6 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 	protected void onPause() {
 		closeUsbDevice();
 		super.onPause();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		//Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
-		inflateDeviceList();
 	}
 
 	public void notifyUSBDeviceAttach() {
@@ -160,9 +158,10 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 			{
 				if(true == ftDev.isOpen())
 				{
-					Toast.makeText(this, "Closing usb in listed", Toast.LENGTH_SHORT).show();
+					Toast.makeText(this, "LISTA: Closing usb", Toast.LENGTH_SHORT).show();
 					Log.d(TAG, "Closing usb device connection.");
 					ftDev.close();
+					ftDev = null;
 				}
 			}
 		}

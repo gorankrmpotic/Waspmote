@@ -2,7 +2,11 @@ package hr.fer.zari.waspmote;
 
 import java.util.ArrayList;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,6 +25,17 @@ import com.ftdi.j2xx.D2xxManager;
 import com.ftdi.j2xx.D2xxManager.D2xxException;
 import com.ftdi.j2xx.FT_Device;
 
+/**
+ * Activity koji omogućuje čitanje/pisanje podataka na spojeni USB uređaj. Spaja
+ * se na index uređaja koji je kliknut u prethodnoj listi spojenih usb uređaja.
+ * <p>
+ * Prilikom izlaska uništava sve ostvarene veze sa spojenim uređajem i tako
+ * omogućava nesmetani rad ostatka aplikacije.
+ * </p>
+ * 
+ * @author Igor Petkovski
+ * 
+ */
 public class ViewUsbSensorDataActivity extends ActionBarActivity {
 
 	private static final String TAG = ViewUsbSensorDataActivity.class
@@ -89,29 +104,21 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 			e.printStackTrace();
 		}
 
-		createDeviceList();
+		IntentFilter filter = new IntentFilter(
+				UsbManager.ACTION_USB_DEVICE_DETACHED);
+		registerReceiver(mUsbReceiver, filter);
 
 		/*
-		if (null == ftDev) {
-			if (DevCount > 0) {
-				ftDev = ftdid2xx.openByIndex(usbDeviceContext, DevCount - 1);
-				if (ftDev != null) {
-					Toast.makeText(this, ftDev.getDeviceInfo().serialNumber,
-							Toast.LENGTH_SHORT).show();
-				}
-			} else {
-				Toast.makeText(this, "No devices found!", Toast.LENGTH_SHORT)
-						.show();
-				onBackPressed();
-			}
-		} else {
-			synchronized (ftDev) {
-				ftDev = ftdid2xx.openByIndex(usbDeviceContext, DevCount - 1);
-				Toast.makeText(this, "Was connected previously.",
-						Toast.LENGTH_SHORT).show();
-			}
-		}
-		*/
+		 * if (null == ftDev) { if (DevCount > 0) { ftDev =
+		 * ftdid2xx.openByIndex(usbDeviceContext, DevCount - 1); if (ftDev !=
+		 * null) { Toast.makeText(this, ftDev.getDeviceInfo().serialNumber,
+		 * Toast.LENGTH_SHORT).show(); } } else { Toast.makeText(this,
+		 * "No devices found!", Toast.LENGTH_SHORT) .show(); onBackPressed(); }
+		 * } else { synchronized (ftDev) { ftDev =
+		 * ftdid2xx.openByIndex(usbDeviceContext, DevCount - 1);
+		 * Toast.makeText(this, "Was connected previously.",
+		 * Toast.LENGTH_SHORT).show(); } }
+		 */
 
 		// * Inflate layout *
 		readData = new byte[readLength];
@@ -251,30 +258,6 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 				}
 			}
 		});
-	}
-
-	@Override
-	protected void onStop() {
-		if (bReadThreadGoing) {
-			bReadThreadGoing = false;
-		}
-		closeUsbDevice();
-		super.onStop();
-	}
-
-	@Override
-	protected void onPause() {
-		if (bReadThreadGoing) {
-			bReadThreadGoing = false;
-		}
-		closeUsbDevice();
-		super.onPause();
-	}
-	
-	@Override
-	protected void onDestroy() {
-		closeUsbDevice();
-		super.onDestroy();
 	}
 
 	/* Implements all options listeners */
@@ -507,6 +490,54 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 				.show();
 	}
 
+	/* Life cycle methods */
+
+	/**
+	 * Samo pobroji spojene uređaje prilikom svakog pokretanja aktivitija.
+	 */
+	@Override
+	public void onResume() {
+		super.onResume();
+		DevCount = 0;
+		createDeviceList();
+
+		// Toast.makeText(this, "onResume,  devc: " + DevCount,
+		// Toast.LENGTH_SHORT).show();
+		/*
+		 * if(DevCount > 0) { connectFunction(); SetConfig(baudRate, dataBit,
+		 * stopBit, parity, flowControl); }
+		 */
+	}
+
+	/**
+	 * Zaustavlja pozadinsku dretvu i odspaja se od USB-a.
+	 */
+	@Override
+	protected void onStop() {
+		if (bReadThreadGoing) {
+			bReadThreadGoing = false;
+		}
+		closeUsbDevice();
+		super.onStop();
+	}
+
+	/**
+	 * Zaustavlja pozadinsku dretvu i odspaja se od USB-a. Deregistrira
+	 * broadcast receiver za USB_DEVICE_DETACHED događaj.
+	 */
+	@Override
+	protected void onPause() {
+		if (bReadThreadGoing) {
+			bReadThreadGoing = false;
+		}
+		unregisterReceiver(mUsbReceiver);
+		closeUsbDevice();
+		super.onPause();
+	}
+
+	/**
+	 * Metoda samo postavlja broj trenutno spojenih uređaja.
+	 */
 	private void createDeviceList() {
 		int tempDevCount = ftdid2xx.createDeviceInfoList(usbDeviceContext);
 
@@ -518,17 +549,25 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 			DevCount = -1;
 		}
 	}
-	
+
+	/**
+	 * Spaja se na prvi USB uređaj, i ispisuje odgovarajuću poruku u slučaju
+	 * neuspjeha.
+	 */
 	public void connectFunction() {
 		int tmpProtNumber = openIndex + 1;
-		Toast.makeText(this, "current: " + currentIndex+ "  \nopenIndex: " + openIndex, Toast.LENGTH_SHORT).show();
+		Toast.makeText(this,
+				"current: " + currentIndex + "  \nopenIndex: " + openIndex,
+				Toast.LENGTH_SHORT).show();
 		if (currentIndex != openIndex) {
 			if (null == ftDev) {
 				ftDev = ftdid2xx.openByIndex(usbDeviceContext, openIndex);
-				Toast.makeText(this, "ftDev = " + ftDev, Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "ftDev = " + ftDev, Toast.LENGTH_SHORT)
+						.show();
 			} else {
 				synchronized (ftDev) {
-					Toast.makeText(this, "Sxnchtonised part entered.", Toast.LENGTH_SHORT).show();
+					Toast.makeText(this, "Sxnchtonised part entered.",
+							Toast.LENGTH_SHORT).show();
 					ftDev = ftdid2xx.openByIndex(usbDeviceContext, openIndex);
 				}
 			}
@@ -575,22 +614,23 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		DevCount = -1;
 		currentIndex = -2;
 		bReadThreadGoing = false;
-		
-		if(ftDev != null)
-		{
-			synchronized(ftDev)
-			{
-				if( true == ftDev.isOpen())
-				{
-					Toast.makeText(this, "Closing usb", Toast.LENGTH_SHORT).show();
+
+		if (ftDev != null) {
+			synchronized (ftDev) {
+				if (true == ftDev.isOpen()) {
+					Toast.makeText(this, "Closing usb", Toast.LENGTH_SHORT)
+							.show();
 					Log.d(TAG, "Closing usb device connection.");
 					ftDev.close();
 				}
 			}
 		}
 	}
-	
 
+	/**
+	 * Toggle funkcija koja ne/omogućava čitanje sa spojenog usb uređaja,
+	 * odnosno ažuriranje podataka u prozor Read Bytes.
+	 */
 	public void EnableRead() {
 		iEnableReadFlag = (iEnableReadFlag + 1) % 2;
 
@@ -604,6 +644,9 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		}
 	}
 
+	/**
+	 * Funkcija koja šalje podatke na spojeni USB uređaj.
+	 */
 	public void SendMessage() {
 		if (ftDev.isOpen() == false) {
 			Log.e("j2xx", "SendMessage: device not open");
@@ -619,7 +662,12 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		ftDev.write(OutData, writeData.length());
 	}
 
+	/**
+	 * Handler koji će primati poruke iz pozadinske dretve za čitanje i
+	 * ažurirati prozor Read Bytes.
+	 */
 	Handler handler = new Handler() {
+
 		@Override
 		public void handleMessage(Message msg) {
 			if (iavailable > 0) {
@@ -628,8 +676,14 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 			}
 		}
 	};
-	
 
+	/**
+	 * Dretva koja u pozadini čita podatke sa spojenog usb uređaja i iste
+	 * podatke prikazuje u prozoru 'Read Bytes'.
+	 * 
+	 * @author Oberon
+	 * 
+	 */
 	private class readThread extends Thread {
 		Handler mHandler;
 
@@ -665,44 +719,48 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 					}
 				}
 			}
-			
+
 			synchronized (ftDev) {
 				if (ftDev.isOpen()) {
-					
+
 					closeUsbDevice();
-					ViewUsbSensorDataActivity.this.runOnUiThread(new Runnable() {
-						
-						@Override
-						public void run() {
-							Toast.makeText(getApplicationContext(), "Zovem usb close iz dretve: " +  Thread.currentThread().getName(), Toast.LENGTH_SHORT).show();
-							closeUsbDevice();
-							currentIndex = -2;
-						}
-					});
+					ViewUsbSensorDataActivity.this
+							.runOnUiThread(new Runnable() {
+
+								@Override
+								public void run() {
+									Toast.makeText(
+											getApplicationContext(),
+											"Zovem usb close iz dretve: "
+													+ Thread.currentThread()
+															.getName(),
+											Toast.LENGTH_SHORT).show();
+									closeUsbDevice();
+									currentIndex = -2;
+								}
+							});
 				}
 			}
-			
+
 		}
 
 	}
 
 	/**
-	 * Hot plug for plug in solution This is workaround before android 4.2 .
-	 * Because BroadcastReceiver can not receive ACTION_USB_DEVICE_ATTACHED
-	 * broadcast.
-	 * <p>
-	 * Automatically connects to a connected device with previous parameters on
-	 * resume.
+	 * Receiver koji registrira otkapčanje USB uređaja. Zaustavlja pozadinsku
+	 * dretvu i izlazi iz activitija.
 	 */
-	@Override
-	public void onResume() {
-		super.onResume();
-		DevCount = 0;
-		createDeviceList();
-		Toast.makeText(this, "onCreate,  devc: " + DevCount, Toast.LENGTH_SHORT).show();
-		/*
-		 * if(DevCount > 0) { connectFunction(); SetConfig(baudRate, dataBit,
-		 * stopBit, parity, flowControl); }
-		 */
-	}
+	BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+
+			if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+				Toast.makeText(ViewUsbSensorDataActivity.this,
+						"Device detatched", Toast.LENGTH_SHORT).show();
+				bReadThreadGoing = false;
+				ftDev = null;
+				onBackPressed();
+			}
+		}
+	};
 }
