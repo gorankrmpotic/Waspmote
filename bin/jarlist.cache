@@ -1,5 +1,10 @@
 # cache for current jar dependency. DO NOT EDIT.
 # format is <lastModified> <length> <SHA-1> <path>
 # Encoding is UTF-8
+<<<<<<< HEAD
 1395960157046 648327 ded9acc6a9792b8f1afc470f0c9cd36d178914cd C:\Users\Goran Krmpotić\workspace2\appcompat_v7\libs\android-support-v4.jar
 1402945330000 648327 ded9acc6a9792b8f1afc470f0c9cd36d178914cd C:\Users\Goran Krmpotić\Desktop\BitBucket\Eclipse2\Waspmote\libs\android-support-v4.jar
+=======
+1403206723113 648327 ded9acc6a9792b8f1afc470f0c9cd36d178914cd C:\Users\Oberon\Desktop\git za import\Waspmote\libs\android-support-v4.jar
+1399552241140 648327 ded9acc6a9792b8f1afc470f0c9cd36d178914cd C:\Users\Oberon\Desktop\git za import\android-support-v7-appcompat\libs\android-support-v4.jar
+>>>>>>> origin/master
