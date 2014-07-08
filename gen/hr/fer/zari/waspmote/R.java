@@ -16,19 +16,6 @@ public final class R {
         public static final int abc_slide_out_bottom=0x7f040004;
         public static final int abc_slide_out_top=0x7f040005;
     }
-    public static final class array {
-        public static final int baud_rate=0x7f0d0000;
-        public static final int buffer_number=0x7f0d000a;
-        public static final int buffer_size=0x7f0d0008;
-        public static final int data_bits=0x7f0d0002;
-        public static final int flow_control=0x7f0d0004;
-        public static final int max_transfer_size=0x7f0d0009;
-        public static final int parity=0x7f0d0003;
-        public static final int port_list_1=0x7f0d0005;
-        public static final int port_list_2=0x7f0d0006;
-        public static final int port_list_4=0x7f0d0007;
-        public static final int stop_bits=0x7f0d0001;
-    }
     public static final class attr {
         /**  Custom divider drawable to use for elements in the action bar. 
          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
@@ -1323,22 +1310,21 @@ containing a value of this type.
         public static final int fragment_start=0x7f030030;
         public static final int fragment_subscription=0x7f030031;
         public static final int list_view_check_box=0x7f030032;
-        public static final int my_spinner_textview=0x7f030033;
-        public static final int support_simple_spinner_dropdown_item=0x7f030034;
+        public static final int support_simple_spinner_dropdown_item=0x7f030033;
     }
     public static final class menu {
-        public static final int administration=0x7f0e0000;
-        public static final int external_sensor=0x7f0e0001;
-        public static final int graph=0x7f0e0002;
-        public static final int gsn=0x7f0e0003;
-        public static final int internal_sensors=0x7f0e0004;
-        public static final int log_in=0x7f0e0005;
-        public static final int main=0x7f0e0006;
-        public static final int new_gsn=0x7f0e0007;
-        public static final int new_subscription=0x7f0e0008;
-        public static final int register=0x7f0e0009;
-        public static final int start=0x7f0e000a;
-        public static final int subscription=0x7f0e000b;
+        public static final int administration=0x7f0d0000;
+        public static final int external_sensor=0x7f0d0001;
+        public static final int graph=0x7f0d0002;
+        public static final int gsn=0x7f0d0003;
+        public static final int internal_sensors=0x7f0d0004;
+        public static final int log_in=0x7f0d0005;
+        public static final int main=0x7f0d0006;
+        public static final int new_gsn=0x7f0d0007;
+        public static final int new_subscription=0x7f0d0008;
+        public static final int register=0x7f0d0009;
+        public static final int start=0x7f0d000a;
+        public static final int subscription=0x7f0d000b;
     }
     public static final class string {
         public static final int Administration=0x7f0b001f;

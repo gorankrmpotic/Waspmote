@@ -115,11 +115,11 @@ public class NewGsnActivity extends Activity {
 		EditText gsnUsernameInput = (EditText)findViewById(R.id.GsnUsernameEditText);
 		EditText gsnPasswordInput = (EditText)findViewById(R.id.GsnPasswordEditText);
 		
-		if(gsnNameInput.getText().toString().isEmpty() || gsnIpInput.getText().toString().isEmpty() || gsnUsernameInput.getText().toString().isEmpty() || gsnPasswordInput.getText().toString().isEmpty())
+		if(gsnNameInput.getText().toString().isEmpty() || gsnIpInput.getText().toString().isEmpty())
 		{
 			AlertDialog.Builder emptyField = new AlertDialog.Builder(NewGsnActivity.this);
 			emptyField.setTitle("Error");
-			emptyField.setMessage("You need to fill all fields!!");
+			emptyField.setMessage("You need to fill all fields that are not optional!!");
 			emptyField.setPositiveButton("Ok", null);
 			emptyField.show();
 		}
