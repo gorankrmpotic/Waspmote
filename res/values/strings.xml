@@ -49,8 +49,8 @@
     <string name="title_activity_new_gsn">NewGsnActivity</string>
     <string name="GsnName">GSN Name</string>
     <string name="GsnIp">GSN Ip</string>
-    <string name="GsnUsername">GSN Username</string>
-    <string name="GsnPassword">GSN Password</string>
+    <string name="GsnUsername">GSN Username [Optional]</string>
+    <string name="GsnPassword">GSN Password [Optional]</string>
     <string name="GsnCreate">Create</string>
     <string name="GsnCancel">Cancel</string>
     <string name="CreateSubscription">Create Subscription</string>

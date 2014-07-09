@@ -171,7 +171,7 @@ public class MeasurementService extends Service {
 				waspApp = (WaspmoteApplication)getApplication();
 				sensorMeasurementData = (SensorMeasurementDataSource) waspApp.getWaspmoteSqlHelper().getSensorMeasurementDataSource(MeasurementService.this);		
 				
-				sensorMeasurementData.addSensorMeasurement(1, System.currentTimeMillis(), (String)msg.obj, "N/A");
+				sensorMeasurementData.addSensorMeasurement(1, System.currentTimeMillis(), String.copyValueOf(readDataToText, 0, iavailable), "N/A");
 			}	
 		}
 
@@ -210,6 +210,7 @@ public class MeasurementService extends Service {
 				Toast.makeText(MeasurementService.this, "SB Gasim servis",
 						Toast.LENGTH_SHORT).show();
 				bReadThreadGoing = false;
+				closeUsbDevice();
 				stopSelf();
 			}
 		}

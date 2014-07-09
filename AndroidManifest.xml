@@ -61,11 +61,6 @@
         <activity
             android:name="hr.fer.zari.waspmote.ListUsbSensorsActivity"
             android:label="@string/title_activity_list_usb_sensors" >
-        </activity>
-        
-        <activity
-            android:name="hr.fer.zari.waspmote.ViewUsbSensorDataActivity"
-            android:label="@string/title_activity_view_usb_device_data" >
             
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
@@ -73,6 +68,12 @@
             <meta-data
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
+        </activity>
+        
+        <activity
+            android:name="hr.fer.zari.waspmote.ViewUsbSensorDataActivity"
+            android:label="@string/title_activity_view_usb_device_data" >
+            
         </activity>
         
         <activity

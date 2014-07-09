@@ -1,6 +1,6 @@
 package hr.fer.zari.waspmote;
 
-import hr.fer.zari.waspmote.services.MeasurementService;
+import hr.fer.zari.waspmote.db.dao.SensorsDataSource;
 
 import java.util.ArrayList;
 
@@ -88,6 +88,7 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 	public readThread read_thread;
 
 	boolean uart_configured = false;
+	boolean isRegistered = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -108,21 +109,18 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		} catch (D2xxException e) {
 			e.printStackTrace();
 		}
-		
-		if (isMyServiceRunning(MeasurementService.class)) {
-			Toast.makeText(this, "USB service running", Toast.LENGTH_SHORT).show();
-		} else {
-			if (getIntent().getAction() != null) {
-				if (getIntent().getAction().equals(android.hardware.usb.UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
-					startService(new Intent(this, MeasurementService.class));
-				}
-			} else {
-				createDeviceList();
-				if (DevCount > 0) {
-					startService(new Intent(this, MeasurementService.class));
-				}
-			}
-		}
+
+		// zovem servis za pracenje usb podataka
+		/*
+		 * if (isMyServiceRunning(MeasurementService.class)) {
+		 * Toast.makeText(this, "USB service running", Toast.LENGTH_SHORT)
+		 * .show(); } else { if (getIntent().getAction() != null) { if
+		 * (getIntent() .getAction()
+		 * .equals(android.hardware.usb.UsbManager.ACTION_USB_DEVICE_ATTACHED))
+		 * { startService(new Intent(this, MeasurementService.class)); } } else
+		 * { createDeviceList(); if (DevCount > 0) { startService(new
+		 * Intent(this, MeasurementService.class)); } } }
+		 */
 
 		// * Inflate layout *
 		readData = new byte[readLength];
@@ -262,7 +260,7 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 				}
 			}
 		});
-		
+
 	}
 
 	/* Implements all options listeners */
@@ -489,28 +487,31 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		// TODO : flow ctrl: XOFF/XOM
 		// TODO : flow ctrl: XOFF/XOM
 		ftDev.setFlowControl(flowCtrlSetting, (byte) 0x0b, (byte) 0x0d);
-		
+
 		Toast.makeText(usbDeviceContext, "Config done", Toast.LENGTH_SHORT)
 				.show();
+		uart_configured = true;
 	}
 
 	/* Life cycle methods */
 
 	/**
-	 * Samo pobroji spojene uređaje prilikom svakog pokretanja aktivitija.
+	 * Pobroji spojene uređaje prilikom svakog pokretanja aktivitija i
+	 * registriraj broadcast koji prati dal se iskopco usb.
 	 */
 	@Override
 	public void onResume() {
 		super.onResume();
 		DevCount = 0;
 		createDeviceList();
-		
+
 		registerReceiver(mUsbReceiver, new IntentFilter(
 				UsbManager.ACTION_USB_DEVICE_DETACHED));
 	}
 
 	/**
-	 * Zaustavlja pozadinsku dretvu i odspaja se od USB-a.
+	 * Zaustavlja pozadinsku dretvu, deregistrira broadcast i odspaja se od
+	 * USB-a.
 	 */
 	@Override
 	protected void onStop() {
@@ -543,7 +544,7 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 	 */
 	public void connectFunction() {
 		int tmpProtNumber = openIndex + 1;
-		
+
 		if (currentIndex != openIndex) {
 			if (null == ftDev) {
 				ftDev = ftdid2xx.openByIndex(usbDeviceContext, openIndex);
@@ -600,6 +601,14 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		currentIndex = -2;
 		bReadThreadGoing = false;
 
+		// glavna dretva mora sacekati pozadinsku dretvu da posalje zadnji
+		// objekt handleru, ukoliko se prekine glavna dretva prije no sto je
+		// pozadinska poslala poruku glavnoj aplikacija se rusi
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException ignore) {
+		}
+
 		if (ftDev != null) {
 			synchronized (ftDev) {
 				if (true == ftDev.isOpen()) {
@@ -610,7 +619,7 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 					ftDev = null;
 				}
 			}
-		}	
+		}
 	}
 
 	/**
@@ -656,10 +665,15 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 
 		@Override
 		public void handleMessage(Message msg) {
-			Toast.makeText(getApplicationContext(), String.valueOf(msg.arg1), Toast.LENGTH_SHORT).show();
+
 			if (iavailable > 0) {
 				readText.append(String.copyValueOf(readDataToText, 0,
 						iavailable));
+
+				if (!isRegistered & uart_configured) {
+					registerSensor(String.copyValueOf(readDataToText, 0,
+							iavailable));
+				}
 			}
 		}
 	};
@@ -683,13 +697,13 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 
 			while (true == bReadThreadGoing) {
 				try {
-					Thread.sleep(50);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 				}
 
 				synchronized (ftDev) {
 					iavailable = ftDev.getQueueStatus();
-					if (iavailable > 0) {
+					if (iavailable > 0 & uart_configured) {
 
 						if (iavailable > readLength) {
 							iavailable = readLength;
@@ -699,34 +713,12 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 						for (i = 0; i < iavailable; i++) {
 							readDataToText[i] = (char) readData[i];
 						}
+
 						Message msg = mHandler.obtainMessage();
 						mHandler.sendMessage(msg);
 					}
 				}
 			}
-
-			synchronized (ftDev) {
-				if (ftDev.isOpen()) {
-
-					closeUsbDevice();
-					ViewUsbSensorDataActivity.this
-							.runOnUiThread(new Runnable() {
-
-								@Override
-								public void run() {
-									Toast.makeText(
-											getApplicationContext(),
-											"Zovem usb close iz dretve: "
-													+ Thread.currentThread()
-															.getName(),
-											Toast.LENGTH_SHORT).show();
-									closeUsbDevice();
-									currentIndex = -2;
-								}
-							});
-				}
-			}
-
 		}
 
 	}
@@ -738,25 +730,53 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 	BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			Toast.makeText(ViewUsbSensorDataActivity.this,
-					"Broadcast primljen", Toast.LENGTH_SHORT).show();
+
 			if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-				Toast.makeText(ViewUsbSensorDataActivity.this,
-						"Device detatched VUSDA", Toast.LENGTH_SHORT).show();
 				bReadThreadGoing = false;
-				ftDev = null;
+				closeUsbDevice();
 				onBackPressed();
 			}
 		}
 	};
-	
+
 	private boolean isMyServiceRunning(Class<?> serviceClass) {
-	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-	        if (serviceClass.getName().equals(service.service.getClassName())) {
-	            return true;
-	        }
-	    }
-	    return false;
+		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+		for (RunningServiceInfo service : manager
+				.getRunningServices(Integer.MAX_VALUE)) {
+			if (serviceClass.getName().equals(service.service.getClassName())) {
+				return true;
+			}
+		}
+		return false;
 	}
+
+	/**
+	 * Provjerava dal je senzor registriran i registrira ga ukoliko nije.
+	 * 
+	 * @param sensorName
+	 *            Cijeli string koji senzor salje. primjer:
+	 *            !moteid!ime!moteid!!b!56!b!!end!
+	 */
+	private void registerSensor(String sensorName) {
+
+		if ((sensorName.length() > 25) & sensorName.startsWith("!moteid!")) {
+
+			sensorName = sensorName.substring(8);
+			sensorName = sensorName.substring(0, sensorName.indexOf('!'));
+
+			WaspmoteApplication waspApp = (WaspmoteApplication) getApplication();
+			SensorsDataSource sensors = (SensorsDataSource) waspApp
+					.getWaspmoteSqlHelper().getSensorsDataSource(this);
+			if (!sensors.SensorExists(sensorName)) {
+				sensors.addSensor(sensorName, 3);
+				Toast.makeText(this,
+						"Sensor: " + sensorName + " is registered!",
+						Toast.LENGTH_SHORT).show();
+			}
+			isRegistered = true;
+
+		}
+
+	}
+
 }

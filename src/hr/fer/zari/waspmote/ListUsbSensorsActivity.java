@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.ftdi.j2xx.D2xxManager;
 import com.ftdi.j2xx.D2xxManager.D2xxException;
@@ -21,7 +20,10 @@ import com.ftdi.j2xx.FT_Device;
  * Klasa trenutno ima implementiranu funkcionalnost očitavanja svih spojenih Usb
  * uređaja. <b>Trenutno ne prikazuje sve spojene uređaje već samo prvi.</b> Ovo
  * dakako u sljedećim verzijama treba promijeniti. 
- * 
+ * <p>
+ * Prilikom izlaska uništava sve ostvarene veze sa spojenim uređajem i tako
+ * omogućava nesmetani rad ostatka aplikacije.
+ * </p>
  * @author Igor Petkovski
  * @version 1.0
  * 
@@ -124,7 +126,6 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 	
 						@Override
 						public void run() {
-							//Toast.makeText(getApplicationContext(), "Zovem usb close iz dretve: " +  Thread.currentThread().getName(), Toast.LENGTH_SHORT).show();
 							closeUsbDevice();
 						}
 					});
@@ -161,7 +162,7 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 			{
 				if(true == ftDev.isOpen())
 				{
-					Toast.makeText(this, "Closing usb device connection", Toast.LENGTH_SHORT).show();
+					//Toast.makeText(this, "Closing usb device connection", Toast.LENGTH_SHORT).show();
 					Log.d(TAG, "Closing usb device connection.");
 					ftDev.close();
 					ftDev = null;

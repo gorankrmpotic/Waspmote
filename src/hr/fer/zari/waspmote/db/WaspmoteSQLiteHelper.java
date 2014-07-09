@@ -45,7 +45,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class WaspmoteSQLiteHelper extends SQLiteOpenHelper{
 
 
-	private static final int DATABASE_VERSION = 13;
+	private static final int DATABASE_VERSION = 14;
 	public static final String DATABASE_NAME = "WaspmoteDB";
 
 	public WaspmoteSQLiteHelper(Context context) {

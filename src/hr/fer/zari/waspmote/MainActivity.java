@@ -38,7 +38,7 @@ public class MainActivity extends ActionBarActivity{
 		setContentView(R.layout.activity_main);
 		setTitle(getString(R.string.app_name));
 		
-		//copyDB();
+		copyDB();
 				
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
@@ -165,7 +165,7 @@ public class MainActivity extends ActionBarActivity{
 	
 	public void UsbSensorButtonClicked(View view)
 	{
-		Intent ExternalSensorIntent = new Intent(this, ViewUsbSensorDataActivity.class);
+		Intent ExternalSensorIntent = new Intent(this, ListUsbSensorsActivity.class);
 		startActivity(ExternalSensorIntent);
 	}
 	
