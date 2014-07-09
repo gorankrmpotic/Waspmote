@@ -6,6 +6,10 @@ import hr.fer.zari.waspmote.db.dao.SensorMeasurementDataSource;
 import hr.fer.zari.waspmote.db.dao.SubscriptionDataSource;
 import hr.fer.zari.waspmote.models.SensorMeasurement;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -33,7 +37,8 @@ public class MainActivity extends ActionBarActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		setTitle(getString(R.string.app_name));
-
+		
+		//copyDB();
 				
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
@@ -58,6 +63,43 @@ public class MainActivity extends ActionBarActivity{
 		
 	}
 
+	private void copyDB() {
+		File f=new File("/data/data/hr.fer.zari.waspmote/databases/WaspmoteDB");
+		FileInputStream fis=null;
+		FileOutputStream fos=null;
+
+		try
+		{
+		  fis=new FileInputStream(f);
+		  fos=new FileOutputStream("/mnt/sdcard/db_dump.db");
+		  while(true)
+		  {
+		    int i=fis.read();
+		    if(i!=-1)
+		    {fos.write(i);}
+		    else
+		    {break;}
+		  }
+		  fos.flush();
+		  Toast.makeText(this, "DB dump OK", Toast.LENGTH_SHORT).show();
+		}
+		catch(Exception e)
+		{
+		  e.printStackTrace();
+		  Toast.makeText(this, "DB dump ERROR", Toast.LENGTH_LONG).show();
+		}
+		finally
+		{
+		  try
+		  {
+		    fos.close();
+		    fis.close();
+		  }
+		  catch(IOException ignore)
+		  {
+		  }
+		}
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -123,7 +165,7 @@ public class MainActivity extends ActionBarActivity{
 	
 	public void UsbSensorButtonClicked(View view)
 	{
-		Intent ExternalSensorIntent = new Intent(this, ListUsbSensorsActivity.class);
+		Intent ExternalSensorIntent = new Intent(this, ViewUsbSensorDataActivity.class);
 		startActivity(ExternalSensorIntent);
 	}
 	
@@ -216,7 +258,6 @@ public class MainActivity extends ActionBarActivity{
 			});
 			dataInTable.show();
 		}
-		
 	}
 
 

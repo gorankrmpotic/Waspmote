@@ -1,7 +1,11 @@
 package hr.fer.zari.waspmote;
 
+import hr.fer.zari.waspmote.services.MeasurementService;
+
 import java.util.ArrayList;
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,12 +18,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.ftdi.j2xx.D2xxManager;
 import com.ftdi.j2xx.D2xxManager.D2xxException;
@@ -74,6 +78,7 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 	int portNumber; /* port number */
 	ArrayList<CharSequence> portNumberList;
 
+	/* read thread variables */
 	public static final int readLength = 512;
 	public int readcount = 0;
 	public int iavailable = 0;
@@ -103,22 +108,21 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		} catch (D2xxException e) {
 			e.printStackTrace();
 		}
-
-		IntentFilter filter = new IntentFilter(
-				UsbManager.ACTION_USB_DEVICE_DETACHED);
-		registerReceiver(mUsbReceiver, filter);
-
-		/*
-		 * if (null == ftDev) { if (DevCount > 0) { ftDev =
-		 * ftdid2xx.openByIndex(usbDeviceContext, DevCount - 1); if (ftDev !=
-		 * null) { Toast.makeText(this, ftDev.getDeviceInfo().serialNumber,
-		 * Toast.LENGTH_SHORT).show(); } } else { Toast.makeText(this,
-		 * "No devices found!", Toast.LENGTH_SHORT) .show(); onBackPressed(); }
-		 * } else { synchronized (ftDev) { ftDev =
-		 * ftdid2xx.openByIndex(usbDeviceContext, DevCount - 1);
-		 * Toast.makeText(this, "Was connected previously.",
-		 * Toast.LENGTH_SHORT).show(); } }
-		 */
+		
+		if (isMyServiceRunning(MeasurementService.class)) {
+			Toast.makeText(this, "USB service running", Toast.LENGTH_SHORT).show();
+		} else {
+			if (getIntent().getAction() != null) {
+				if (getIntent().getAction().equals(android.hardware.usb.UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
+					startService(new Intent(this, MeasurementService.class));
+				}
+			} else {
+				createDeviceList();
+				if (DevCount > 0) {
+					startService(new Intent(this, MeasurementService.class));
+				}
+			}
+		}
 
 		// * Inflate layout *
 		readData = new byte[readLength];
@@ -258,6 +262,7 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 				}
 			}
 		});
+		
 	}
 
 	/* Implements all options listeners */
@@ -484,8 +489,7 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		// TODO : flow ctrl: XOFF/XOM
 		// TODO : flow ctrl: XOFF/XOM
 		ftDev.setFlowControl(flowCtrlSetting, (byte) 0x0b, (byte) 0x0d);
-
-		uart_configured = true;
+		
 		Toast.makeText(usbDeviceContext, "Config done", Toast.LENGTH_SHORT)
 				.show();
 	}
@@ -500,13 +504,9 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		super.onResume();
 		DevCount = 0;
 		createDeviceList();
-
-		// Toast.makeText(this, "onResume,  devc: " + DevCount,
-		// Toast.LENGTH_SHORT).show();
-		/*
-		 * if(DevCount > 0) { connectFunction(); SetConfig(baudRate, dataBit,
-		 * stopBit, parity, flowControl); }
-		 */
+		
+		registerReceiver(mUsbReceiver, new IntentFilter(
+				UsbManager.ACTION_USB_DEVICE_DETACHED));
 	}
 
 	/**
@@ -517,22 +517,9 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		if (bReadThreadGoing) {
 			bReadThreadGoing = false;
 		}
-		closeUsbDevice();
-		super.onStop();
-	}
-
-	/**
-	 * Zaustavlja pozadinsku dretvu i odspaja se od USB-a. Deregistrira
-	 * broadcast receiver za USB_DEVICE_DETACHED događaj.
-	 */
-	@Override
-	protected void onPause() {
-		if (bReadThreadGoing) {
-			bReadThreadGoing = false;
-		}
 		unregisterReceiver(mUsbReceiver);
 		closeUsbDevice();
-		super.onPause();
+		super.onStop();
 	}
 
 	/**
@@ -556,9 +543,7 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 	 */
 	public void connectFunction() {
 		int tmpProtNumber = openIndex + 1;
-		Toast.makeText(this,
-				"current: " + currentIndex + "  \nopenIndex: " + openIndex,
-				Toast.LENGTH_SHORT).show();
+		
 		if (currentIndex != openIndex) {
 			if (null == ftDev) {
 				ftDev = ftdid2xx.openByIndex(usbDeviceContext, openIndex);
@@ -566,7 +551,7 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 						.show();
 			} else {
 				synchronized (ftDev) {
-					Toast.makeText(this, "Sxnchtonised part entered.",
+					Toast.makeText(this, "Sxnchronised part entered.",
 							Toast.LENGTH_SHORT).show();
 					ftDev = ftdid2xx.openByIndex(usbDeviceContext, openIndex);
 				}
@@ -622,9 +607,10 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 							.show();
 					Log.d(TAG, "Closing usb device connection.");
 					ftDev.close();
+					ftDev = null;
 				}
 			}
-		}
+		}	
 	}
 
 	/**
@@ -670,6 +656,7 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 
 		@Override
 		public void handleMessage(Message msg) {
+			Toast.makeText(getApplicationContext(), String.valueOf(msg.arg1), Toast.LENGTH_SHORT).show();
 			if (iavailable > 0) {
 				readText.append(String.copyValueOf(readDataToText, 0,
 						iavailable));
@@ -680,8 +667,6 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 	/**
 	 * Dretva koja u pozadini čita podatke sa spojenog usb uređaja i iste
 	 * podatke prikazuje u prozoru 'Read Bytes'.
-	 * 
-	 * @author Oberon
 	 * 
 	 */
 	private class readThread extends Thread {
@@ -753,14 +738,25 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 	BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-
+			Toast.makeText(ViewUsbSensorDataActivity.this,
+					"Broadcast primljen", Toast.LENGTH_SHORT).show();
 			if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
 				Toast.makeText(ViewUsbSensorDataActivity.this,
-						"Device detatched", Toast.LENGTH_SHORT).show();
+						"Device detatched VUSDA", Toast.LENGTH_SHORT).show();
 				bReadThreadGoing = false;
 				ftDev = null;
 				onBackPressed();
 			}
 		}
 	};
+	
+	private boolean isMyServiceRunning(Class<?> serviceClass) {
+	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+	        if (serviceClass.getName().equals(service.service.getClassName())) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
 }

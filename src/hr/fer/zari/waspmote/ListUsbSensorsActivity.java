@@ -20,7 +20,7 @@ import com.ftdi.j2xx.FT_Device;
 /**
  * Klasa trenutno ima implementiranu funkcionalnost očitavanja svih spojenih Usb
  * uređaja. <b>Trenutno ne prikazuje sve spojene uređaje već samo prvi.</b> Ovo
- * dakako u sljedećim verzijama treba promijeniti.
+ * dakako u sljedećim verzijama treba promijeniti. 
  * 
  * @author Igor Petkovski
  * @version 1.0
@@ -30,8 +30,11 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 
 	private static final String TAG = ListUsbSensorsActivity.class
 			.getSimpleName();
+	
 	private Context usbDeviceContext;
+	// nadogradnja na androidov USB manager
 	private D2xxManager ftdid2xx;
+	// predstavlja USB uređaj
 	private FT_Device ftDev = null;
 	private static ListView usbSensorsList;
 	private int DevCount = -1;
@@ -57,7 +60,7 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
 		inflateDeviceList();
 	}
 
@@ -99,9 +102,9 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 		if (null == ftDev) {
 			if (DevCount > 0) {
 				ftDev = ftdid2xx.openByIndex(usbDeviceContext, DevCount - 1);
-				Toast.makeText(this, "LISTA: otvara device = " + ftDev, Toast.LENGTH_SHORT).show();
+				//Toast.makeText(this, "Opening device = " + ftDev.getDeviceInfo().serialNumber, Toast.LENGTH_SHORT).show();
 			} else {
-				Toast.makeText(this, "LISTA: No devices found!", Toast.LENGTH_SHORT).show();
+				//Toast.makeText(this, "No devices found!", Toast.LENGTH_SHORT).show();
 				onBackPressed();
 			}
 		}
@@ -121,7 +124,7 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 	
 						@Override
 						public void run() {
-							Toast.makeText(getApplicationContext(), "Zovem usb close iz dretve: " +  Thread.currentThread().getName(), Toast.LENGTH_SHORT).show();
+							//Toast.makeText(getApplicationContext(), "Zovem usb close iz dretve: " +  Thread.currentThread().getName(), Toast.LENGTH_SHORT).show();
 							closeUsbDevice();
 						}
 					});
@@ -148,7 +151,7 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 	}
 
 	/**
-	 * Closes opened ftDev.
+	 * Closes opened ftDev device connection.
 	 */
 	private void closeUsbDevice() {
 		DevCount = -1;
@@ -158,7 +161,7 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 			{
 				if(true == ftDev.isOpen())
 				{
-					Toast.makeText(this, "LISTA: Closing usb", Toast.LENGTH_SHORT).show();
+					Toast.makeText(this, "Closing usb device connection", Toast.LENGTH_SHORT).show();
 					Log.d(TAG, "Closing usb device connection.");
 					ftDev.close();
 					ftDev = null;

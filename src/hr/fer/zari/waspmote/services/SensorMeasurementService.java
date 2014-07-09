@@ -10,10 +10,7 @@ import hr.fer.zari.waspmote.models.Sensors;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -222,7 +219,7 @@ public class SensorMeasurementService extends Service implements SensorEventList
 		}
 		if(sd.containsExternalBluetoothSensors())
 		{
-			byte[] buffer = new byte[1024];
+//			byte[] buffer = new byte[1024];
 //			buffer = "Data".getBytes();
 //			try
 //			{
@@ -256,7 +253,7 @@ public class SensorMeasurementService extends Service implements SensorEventList
 					Thread.sleep(50);
 				}
 				inStream.read(readBuff);
-				String dataReceived = new String(readBuff).trim();				
+				String dataReceived = new String(readBuff).trim();			
 				int id = sd.getSensorIdByName(sd.getExternalBluetoothSensors().get(0).getSensorName());
 				if(id != -1)
 				{

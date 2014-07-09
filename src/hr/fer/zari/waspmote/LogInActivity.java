@@ -111,7 +111,7 @@ public class LogInActivity extends ActionBarActivity {
 			adb.setPositiveButton("Ok", null);
 			adb.show();
 		}
-		//u redu je ovako da se ubije trenutni activity jer onda prilikom backa samo baci na poÔøΩetni zaslon :)
+		//u redu je ovako da se ubije trenutni activity jer onda prilikom backa samo baci na poƒçetni zaslon :)
 		
 	}
 	
@@ -130,7 +130,7 @@ public class LogInActivity extends ActionBarActivity {
 		}
 		catch(Exception ex)
 		{
-			//do ovoga dolazi ako se niöta ne pronae zasad!
+			//do ovoga dolazi ako se ni≈°ta ne pronaƒáe zasad!
 			AlertDialog.Builder aa = new AlertDialog.Builder(LogInActivity.this);
 			aa.setTitle("Exception2");
 			aa.setMessage(ex.getMessage());

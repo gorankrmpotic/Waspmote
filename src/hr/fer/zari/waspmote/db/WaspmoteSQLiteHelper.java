@@ -46,7 +46,7 @@ public class WaspmoteSQLiteHelper extends SQLiteOpenHelper{
 
 
 	private static final int DATABASE_VERSION = 13;
-	private static final String DATABASE_NAME = "WaspmoteDB";
+	public static final String DATABASE_NAME = "WaspmoteDB";
 
 	public WaspmoteSQLiteHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);		

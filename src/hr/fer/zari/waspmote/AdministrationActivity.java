@@ -3,8 +3,6 @@ package hr.fer.zari.waspmote;
 import hr.fer.zari.waspmote.db.dao.UserDataSource;
 import hr.fer.zari.waspmote.models.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -19,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 public class AdministrationActivity extends ActionBarActivity {
 
