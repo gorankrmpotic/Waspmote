@@ -27,12 +27,19 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="hr.fer.zari.waspmote.StartActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" 
+            android:launchMode="singleInstance" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
         </activity>
         <activity
             android:name="hr.fer.zari.waspmote.LogInActivity"
@@ -62,12 +69,6 @@
             android:name="hr.fer.zari.waspmote.ListUsbSensorsActivity"
             android:label="@string/title_activity_list_usb_sensors" >
             
-            <intent-filter>
-                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-            </intent-filter>
-            <meta-data
-                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                android:resource="@xml/device_filter" />
         </activity>
         
         <activity

@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.util.TimeUtils;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -108,10 +109,24 @@ public class GsnService extends Service {
 						if(s.getSensorType() == 2)
 						{
 							String val = sm.getValue();
-							if(!val.startsWith("!"))
-							{
-								toSendData += "!"+s.getSensorName()+"!"+val+"!"+s.getSensorName()+"!"+"!end!";
-							}
+							//if(!val.startsWith("!"))
+							//{
+								toSendData += "!"+s.getSensorName()+"!"+val+"!"+s.getSensorName()+"!";
+							//} 
+						}
+					}							
+				}
+			}
+			if (sd.containsExternalUsbSensors()) {
+				for(SensorMeasurement sm : sensMeas)
+				{
+					Sensors s = sd.getSensorById(sm.getIdSensor());
+					if(s != null)
+					{
+						if(s.getSensorType() == 3)
+						{
+							String val = sm.getValue();		
+							toSendData += "!"+s.getSensorName()+"!"+val+"!"+s.getSensorName()+"!";
 						}
 					}							
 				}
@@ -160,7 +175,8 @@ public class GsnService extends Service {
 				doWork();
 			}
 			
-		}, TimeUnit.MINUTES.toMillis(period));
+			// TODO vrati na staro  TimeUnit.MINUTES.toMillis(period));
+		}, TimeUnit.SECONDS.toMillis(10));
 	}
 	
 	

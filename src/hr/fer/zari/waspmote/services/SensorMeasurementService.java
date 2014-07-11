@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import com.ftdi.j2xx.D2xxManager;
+import com.ftdi.j2xx.FT_Device;
+import com.ftdi.j2xx.D2xxManager.D2xxException;
+
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -29,7 +33,10 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 public class SensorMeasurementService extends Service implements SensorEventListener {
 
@@ -48,6 +55,25 @@ public class SensorMeasurementService extends Service implements SensorEventList
 	SensorMeasurementDataSource sensorMeasurementData;
 	WaspmoteApplication waspApp;
 	boolean first = true;
+	Long ts;
+	
+	/* usb sensors variables */
+	private Context usbDeviceContext;
+	private D2xxManager ftdid2xx;
+	private FT_Device ftDev = null;
+	private int DevCount = 0;
+	private int ftDevId;
+	/* read usb data variables */
+	private readThread read_thread;
+	private static final int readLength = 512;
+	private int iavailable = 0;
+	byte[] readData;
+	char[] readDataToText;
+	boolean bReadThreadGoing;
+	boolean uart_configured;
+	boolean connected;
+	String data;
+	int times = 0;
 	
 	
 	@Override
@@ -58,13 +84,15 @@ public class SensorMeasurementService extends Service implements SensorEventList
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		// TODO Auto-generated method stub
 		//return super.onStartCommand(intent, flags, startId);
 		sd = (ServiceData) intent.getExtras().getSerializable("ServiceData");
 		waspApp = (WaspmoteApplication)getApplication();
 		sensorMeasurementData = (SensorMeasurementDataSource) waspApp.getWaspmoteSqlHelper().getSensorMeasurementDataSource(this);		
 		period = sd.getPeriod();
+		
 		Log.d("SensorMeasurementService", "Service started");
+		Toast.makeText(this, "Service started!", Toast.LENGTH_SHORT).show();
+		
 		if(sd.containsExternalBluetoothSensors())
 		{			
 			final Sensors extSensor = sd.getExternalBluetoothSensors().get(0);			
@@ -78,7 +106,6 @@ public class SensorMeasurementService extends Service implements SensorEventList
 
 				@Override
 				public void onReceive(Context context, Intent intent) {
-					// TODO Auto-generated method stub
 					String action = intent.getAction();
 					if(BluetoothDevice.ACTION_FOUND.equals(action))
 					{
@@ -100,8 +127,8 @@ public class SensorMeasurementService extends Service implements SensorEventList
 			filter.addAction(BluetoothDevice.ACTION_FOUND);
 			filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 			registerReceiver(recv, filter);	
-			
 		}
+		
 		if(sd.containsInternalSensors())
 		{
 			mgr = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -127,6 +154,23 @@ public class SensorMeasurementService extends Service implements SensorEventList
 		  	}
 		}
 		
+		// uspostava veze sa vanjskim usb senzorom
+		if(sd.containsExternalUsbSensors())
+		{
+			usbDeviceContext = getApplicationContext();
+			try {
+				ftdid2xx = D2xxManager.getInstance(usbDeviceContext);
+			} catch (D2xxException e) {
+				e.printStackTrace();
+			}
+			connectToUsb();
+			
+			ftDev.purge((D2xxManager.FT_PURGE_TX));
+			ftDev.restartInTask();
+			configureUart();
+			//Toast.makeText(this, "ftDev = " + ftDev, Toast.LENGTH_SHORT).show();
+		}
+		
 		if(!sd.containsExternalBluetoothSensors())
 		{
 			doWork();
@@ -137,8 +181,6 @@ public class SensorMeasurementService extends Service implements SensorEventList
 
 	@Override
 	public void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
 		handler.removeCallbacks(null);
 		handler.removeCallbacksAndMessages(null);
 		if(inStream != null)
@@ -175,16 +217,24 @@ public class SensorMeasurementService extends Service implements SensorEventList
 			}
 			connectionSocket = null;
 		}
+		
+		// usb device destroy
+		if (ftDev != null) {
+			synchronized (ftDev) {
+				if (true == ftDev.isOpen()) {
+					Toast.makeText(this, "Closing usb", Toast.LENGTH_SHORT)
+							.show();
+					ftDev.close();
+					ftDev = null;
+				}
+			}
+		}
 		Log.w("SensorMeasurementService", "Service killed");
+		super.onDestroy();
 	}
-	
-	
-
-
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		// TODO Auto-generated method stub
 		mSensor changedValueSensor = internalSensors.getSensorByName(event.sensor.getName());
 		if(changedValueSensor != null)
 		{
@@ -194,17 +244,16 @@ public class SensorMeasurementService extends Service implements SensorEventList
 
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}
 	
 	public void doWork()
 	{		
-		Long ts = System.currentTimeMillis();
+		ts = System.currentTimeMillis();
 		if(sd.containsInternalSensors())
 		{
 			if(!first)
-			{				
+			{
 				for(mSensor sen : internalSensors.getAllSensors())
 				{					
 					int id = sd.getSensorIdByName(sen.getSensorName());
@@ -266,16 +315,53 @@ public class SensorMeasurementService extends Service implements SensorEventList
 				Log.e("SensorMeasurementService", ex.getMessage());
 			}
 		}
-//		final Handler handler = new Handler();
+		// procitaj podatak i zapisi ga u bazu
+		if(sd.containsExternalUsbSensors()) {
+			boolean saved = false;
+			int i;
+			int timeLimit = 20;
+			readData = new byte[readLength];
+			readDataToText = new char[readLength];
+
+			if (ftDev.isOpen()) {
+				//Toast.makeText(getApplicationContext(), "pocetak: " + times + saved, Toast.LENGTH_SHORT).show();
+			} else {
+				//Toast.makeText(getApplicationContext(), "ponovno", Toast.LENGTH_SHORT).show();
+				connectToUsb();
+			}
+			read_thread = new readThread();
+			bReadThreadGoing = true;
+			read_thread.start();
+			
+			/*
+			iavailable = ftDev.getQueueStatus();
+			Toast.makeText(getApplicationContext(), "que = " + iavailable + "", Toast.LENGTH_SHORT).show();
+			if (iavailable > 0) {
+				if (iavailable > readLength) {
+					iavailable = readLength;
+				}
+				//Toast.makeText(getApplicationContext(), "read = " + , Toast.LENGTH_SHORT).show();
+				ftDev.read(readData, iavailable);
+				for (i = 0; i < iavailable; i++) {
+					readDataToText[i] = (char) readData[i];
+				}
+				String data = String.copyValueOf(readDataToText, 0,
+						iavailable);
+				Toast.makeText(getApplicationContext(), "" + data, Toast.LENGTH_SHORT).show();
+			}
+			*/
+		}
+				
 		
+		// na ovaj nacin metoda rekurzivno poziva sama sebe po svom zavrsetku
 		handler.postDelayed(new Runnable() {
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub				
 				doWork();
 			}
-		}, TimeUnit.MINUTES.toMillis(period));			
+			// TODO PROMIJENI NA  TimeUnit.MINUTES.toMillis(period));
+		}, TimeUnit.SECONDS.toMillis(5));			
 	}
 	
 	public void MakeConnection()
@@ -302,8 +388,91 @@ public class SensorMeasurementService extends Service implements SensorEventList
 		}
 	}
 	
+	private void connectToUsb() {
+		DevCount = ftdid2xx.createDeviceInfoList(usbDeviceContext);
+		if (null==ftDev & DevCount>0) {
+			ftDev = ftdid2xx.openByIndex(usbDeviceContext, 0);
+		}
+		if (ftDev != null) {
+			ftDevId = sd.getExternalUsbSensors().get(0).get_id();
+			connected = true;
+		}
+	}
 	
+	private void configureUart() {
+		ftDev.setBitMode((byte) 0, D2xxManager.FT_BITMODE_RESET);
+		ftDev.setBaudRate(38400);
+		ftDev.setDataCharacteristics(D2xxManager.FT_DATA_BITS_8,
+				D2xxManager.FT_STOP_BITS_1, D2xxManager.FT_PARITY_NONE);
+		ftDev.setFlowControl(D2xxManager.FT_FLOW_NONE, (byte) 0x0b,
+				(byte) 0x0d);
+		uart_configured = true;
+	}
 	
+	/**
+	 * Dretva koja u pozadini čita podatke sa spojenog usb uređaja i iste
+	 * podatke prikazuje u prozoru 'Read Bytes'.
+	 */
+	private class readThread extends Thread {
+		//Handler mHandler;
+		Handler uiHandler = new Handler(Looper.getMainLooper());
+
+		readThread() {
+			//mHandler = h;
+			this.setPriority(Thread.MIN_PRIORITY);
+		}
+
+		@Override
+		public void run() {
+			int i;
+
+			while (true == bReadThreadGoing) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+				}
+
+				synchronized (ftDev) {
+					iavailable = ftDev.getQueueStatus();
+					if (iavailable > 0 & uart_configured) {
+
+						if (iavailable > readLength) {
+							iavailable = readLength;
+						}
+
+						ftDev.read(readData, iavailable);
+						for (i = 0; i < iavailable; i++) {
+							readDataToText[i] = (char) readData[i];
+						}
+						//waspApp = (WaspmoteApplication)getApplication();
+						//sensorMeasurementData = (SensorMeasurementDataSource) waspApp.getWaspmoteSqlHelper().getSensorMeasurementDataSource(SensorMeasurementService.this);		
+						data = String.copyValueOf(readDataToText, 0, iavailable);
+						//Toast.makeText(getApplicationContext(), "nije: " + data, Toast.LENGTH_SHORT).show();
+
+						uiHandler.post(new Runnable() {
+							
+							@Override
+							public void run() {
+								
+								data = data.trim();
+								data = data.split("!moteid!")[2];
+								data = data.trim();
+								if (data.endsWith("!end!")) {
+									data = data.split("!end!")[0];
+									WaspmoteApplication waspApp = (WaspmoteApplication)getApplication();
+									SensorMeasurementDataSource sensorMeasurementData = (SensorMeasurementDataSource) waspApp.getWaspmoteSqlHelper().getSensorMeasurementDataSource(SensorMeasurementService.this);		
+									sensorMeasurementData.addSensorMeasurement(ftDevId, ts, data, "N/A");	
+									//Toast.makeText(getApplicationContext(), data, Toast.LENGTH_SHORT).show();
+								}
+							}
+						});
+						bReadThreadGoing = false;
+					}
+				}
+			}
+		}
+
+	}
 	
 
 }

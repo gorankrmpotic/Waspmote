@@ -59,6 +59,7 @@ public class NewSubscriptionActivity extends Activity {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
+		
 		waspApp = (WaspmoteApplication)getApplication();
 		gsnData = (GSNDataSource)waspApp.getWaspmoteSqlHelper().getGSNDataSource(this);
 		sensorsData = (SensorsDataSource) waspApp.getWaspmoteSqlHelper().getSensorsDataSource(this);
@@ -178,11 +179,11 @@ public class NewSubscriptionActivity extends Activity {
 	
 	public void NewSubscriptionButtonClicked(View view)
 	{
-		//obriši subscription iz baze -> ako postoji
+		//obrisi subscription iz baze -> ako postoji
 		final List<Subscription> subs = subscriptionData.getAllSubscriptions();		
 		if(!subs.isEmpty() && ActivityType.trim().equals("Create"))		{
 			
-			//za obrnutu situaciju !subs.isEmpty() daj upozorenje da æe obrisati postojeæi!!
+			//za obrnutu situaciju !subs.isEmpty() daj upozorenje da ce obrisati postojeci!!
 			AlertDialog.Builder confirmDialog = new AlertDialog.Builder(NewSubscriptionActivity.this);
 			confirmDialog.setTitle("Warning");
 			confirmDialog.setMessage("Creating this subscription will delete the previous one!");
@@ -190,9 +191,8 @@ public class NewSubscriptionActivity extends Activity {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					// TODO Auto-generated method stub
 					subscriptionData.deleteSubscription(subs.get(0));
-					//brišem stari servis i radim novi!
+					//brisem stari servis i radim novi!
 					stopService(new Intent(getBaseContext(), SensorMeasurementService.class));
 					List<String> selectedSensors = new ArrayList<String>();
 					for(ListViewSensorItems item : listItems)
@@ -239,7 +239,8 @@ public class NewSubscriptionActivity extends Activity {
 						//dohvati id subscriptiona
 						List<Subscription> subsForId = subscriptionData.getAllSubscriptions();
 						int idSubs = subsForId.get(subsForId.size()-1).get_id();
-						//dohvati idjeve senzora
+						
+						// **** dohvati idjeve senzora ****
 						final List<Sensors> sensorsForService = new ArrayList<Sensors>();
 						for(String sensorName : selectedSensors)
 						{							
@@ -252,7 +253,6 @@ public class NewSubscriptionActivity extends Activity {
 							
 							@Override
 							public void run() {
-								// TODO Auto-generated method stub
 								Intent subsService = new Intent(getBaseContext(), SensorMeasurementService.class);						
 								//ServiceData sd = new ServiceData(sensorsForService, period);
 								ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
@@ -265,7 +265,6 @@ public class NewSubscriptionActivity extends Activity {
 //						new Thread(new Runnable() {							
 //							@Override
 //							public void run() {
-//								// TODO Auto-generated method stub
 //								Intent subsService = new Intent(getBaseContext(), GsnService.class);						
 //								//ServiceData sd = new ServiceData(sensorsForService, period);
 //								ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
@@ -280,11 +279,9 @@ public class NewSubscriptionActivity extends Activity {
 							
 							@Override
 							public void run() {
-								// TODO Auto-generated method stub
 								new Thread(new Runnable() {							
 									@Override
 									public void run() {
-										// TODO Auto-generated method stub
 										Intent subsService = new Intent(getBaseContext(), GsnService.class);						
 										//ServiceData sd = new ServiceData(sensorsForService, period);
 										ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
@@ -304,12 +301,12 @@ public class NewSubscriptionActivity extends Activity {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					// TODO Auto-generated method stub
 					finish();
 				}
 			});
 			confirmDialog.show();
-		}		
+		}
+		
 		//dohvati sve elemente osim listviewa koji puni podatke u klasu globalno dostupnu
 		else if(ActivityType.equals("Edit"))
 		{
@@ -375,7 +372,6 @@ public class NewSubscriptionActivity extends Activity {
 				
 				@Override
 				public void run() {
-					// TODO Auto-generated method stub
 					Intent subsService = new Intent(getBaseContext(), SensorMeasurementService.class);						
 					//ServiceData sd = new ServiceData(sensorsForService, period);
 					ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
@@ -389,7 +385,6 @@ public class NewSubscriptionActivity extends Activity {
 //			new Thread(new Runnable() {							
 //				@Override
 //				public void run() {
-//					// TODO Auto-generated method stub
 //					Intent subsService = new Intent(getBaseContext(), GsnService.class);						
 //					//ServiceData sd = new ServiceData(sensorsForService, period);
 //					ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
@@ -405,11 +400,9 @@ public class NewSubscriptionActivity extends Activity {
 				
 				@Override
 				public void run() {
-					// TODO Auto-generated method stub
 					new Thread(new Runnable() {							
 						@Override
 						public void run() {
-							// TODO Auto-generated method stub
 							Intent subsService = new Intent(getBaseContext(), GsnService.class);						
 							//ServiceData sd = new ServiceData(sensorsForService, period);
 							ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
@@ -484,7 +477,6 @@ public class NewSubscriptionActivity extends Activity {
 					
 					@Override
 					public void run() {
-						// TODO Auto-generated method stub
 						Intent subsService = new Intent(getBaseContext(), SensorMeasurementService.class);						
 						//ServiceData sd = new ServiceData(sensorsForService, period);
 						ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
@@ -499,11 +491,9 @@ public class NewSubscriptionActivity extends Activity {
 					
 					@Override
 					public void run() {
-						// TODO Auto-generated method stub
 						new Thread(new Runnable() {							
 							@Override
 							public void run() {
-								// TODO Auto-generated method stub
 								Intent subsService = new Intent(getBaseContext(), GsnService.class);						
 								//ServiceData sd = new ServiceData(sensorsForService, period);
 								ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
@@ -518,7 +508,6 @@ public class NewSubscriptionActivity extends Activity {
 //				new Thread(new Runnable() {							
 //					@Override
 //					public void run() {
-//						// TODO Auto-generated method stub
 //						Intent subsService = new Intent(getBaseContext(), GsnService.class);						
 //						//ServiceData sd = new ServiceData(sensorsForService, period);
 //						ServiceData sd = new ServiceData(sensorsForService, period, selectedGsn.getIp(), selectedGsn.getGSNUsername(), selectedGsn.getGSNPassword());
@@ -535,7 +524,7 @@ public class NewSubscriptionActivity extends Activity {
 		
 		//napravi novi subs u bazu
 		//pokreni novi servis!!
-		//ako postoji servis, obriši ga, 
+		//ako postoji servis, obrisi ga, 
 	}
 	
 	public void FillListView()
@@ -605,7 +594,6 @@ public class NewSubscriptionActivity extends Activity {
 					
 					@Override
 					public void onClick(View v) {
-						// TODO Auto-generated method stub
 						CheckBox cb = (CheckBox) v;
 						ListViewSensorItems _item = (ListViewSensorItems) cb.getTag();
 						Toast.makeText(getApplicationContext(), "Sensor: "+cb.getText()+" -> "+cb.isChecked()  , Toast.LENGTH_LONG).show();

@@ -1,6 +1,7 @@
 package hr.fer.zari.waspmote;
 
 import hr.fer.zari.waspmote.db.dao.SensorsDataSource;
+import hr.fer.zari.waspmote.services.MeasurementService;
 
 import java.util.ArrayList;
 
@@ -110,17 +111,26 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 			e.printStackTrace();
 		}
 
-		// zovem servis za pracenje usb podataka
-		/*
-		 * if (isMyServiceRunning(MeasurementService.class)) {
-		 * Toast.makeText(this, "USB service running", Toast.LENGTH_SHORT)
-		 * .show(); } else { if (getIntent().getAction() != null) { if
-		 * (getIntent() .getAction()
-		 * .equals(android.hardware.usb.UsbManager.ACTION_USB_DEVICE_ATTACHED))
-		 * { startService(new Intent(this, MeasurementService.class)); } } else
-		 * { createDeviceList(); if (DevCount > 0) { startService(new
-		 * Intent(this, MeasurementService.class)); } } }
-		 */
+		// zovem servis za pracenje usb podataka ako vec nije pokrenut
+		
+		if (isMyServiceRunning(MeasurementService.class)) {
+			Toast.makeText(this, "USB service running", Toast.LENGTH_SHORT)
+					.show();
+		} else {
+			if (getIntent().getAction() != null) {
+				if (getIntent()
+						.getAction()
+						.equals(android.hardware.usb.UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
+					startService(new Intent(this, MeasurementService.class));
+				}
+			} else {
+				createDeviceList();
+				if (DevCount > 0) {
+					startService(new Intent(this, MeasurementService.class));
+				}
+			}
+		}
+		
 
 		// * Inflate layout *
 		readData = new byte[readLength];
@@ -548,8 +558,6 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		if (currentIndex != openIndex) {
 			if (null == ftDev) {
 				ftDev = ftdid2xx.openByIndex(usbDeviceContext, openIndex);
-				Toast.makeText(this, "ftDev = " + ftDev, Toast.LENGTH_SHORT)
-						.show();
 			} else {
 				synchronized (ftDev) {
 					Toast.makeText(this, "Sxnchronised part entered.",
@@ -581,8 +589,8 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 
 			if (false == bReadThreadGoing) {
 				read_thread = new readThread(handler);
-				read_thread.start();
 				bReadThreadGoing = true;
+				read_thread.start();
 			}
 		} else {
 			Toast.makeText(usbDeviceContext,
@@ -681,7 +689,6 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 	/**
 	 * Dretva koja u pozadini čita podatke sa spojenog usb uređaja i iste
 	 * podatke prikazuje u prozoru 'Read Bytes'.
-	 * 
 	 */
 	private class readThread extends Thread {
 		Handler mHandler;
@@ -713,7 +720,6 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 						for (i = 0; i < iavailable; i++) {
 							readDataToText[i] = (char) readData[i];
 						}
-
 						Message msg = mHandler.obtainMessage();
 						mHandler.sendMessage(msg);
 					}
@@ -730,7 +736,6 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 	BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-
 			if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
 				bReadThreadGoing = false;
 				closeUsbDevice();
@@ -774,7 +779,6 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 						Toast.LENGTH_SHORT).show();
 			}
 			isRegistered = true;
-
 		}
 
 	}

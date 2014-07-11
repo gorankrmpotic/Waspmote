@@ -38,7 +38,7 @@ public class MainActivity extends ActionBarActivity{
 		setContentView(R.layout.activity_main);
 		setTitle(getString(R.string.app_name));
 		
-		copyDB();
+		//copyDB();
 				
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
@@ -59,48 +59,12 @@ public class MainActivity extends ActionBarActivity{
 			subscriptionButton.setVisibility(View.GONE);
 			Button deleteButton = (Button) findViewById(R.id.DeleteDataButton);
 			deleteButton.setVisibility(View.GONE);
+			Button backupButton = (Button) findViewById(R.id.BackupDataButton);
+			backupButton.setVisibility(View.GONE);
 		}
 		
 	}
-
-	private void copyDB() {
-		File f=new File("/data/data/hr.fer.zari.waspmote/databases/WaspmoteDB");
-		FileInputStream fis=null;
-		FileOutputStream fos=null;
-
-		try
-		{
-		  fis=new FileInputStream(f);
-		  fos=new FileOutputStream("/mnt/sdcard/db_dump.db");
-		  while(true)
-		  {
-		    int i=fis.read();
-		    if(i!=-1)
-		    {fos.write(i);}
-		    else
-		    {break;}
-		  }
-		  fos.flush();
-		  Toast.makeText(this, "DB dump OK", Toast.LENGTH_SHORT).show();
-		}
-		catch(Exception e)
-		{
-		  e.printStackTrace();
-		  Toast.makeText(this, "DB dump ERROR", Toast.LENGTH_LONG).show();
-		}
-		finally
-		{
-		  try
-		  {
-		    fos.close();
-		    fis.close();
-		  }
-		  catch(IOException ignore)
-		  {
-		  }
-		}
-	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -260,6 +224,46 @@ public class MainActivity extends ActionBarActivity{
 		}
 	}
 
+	/**
+	 * Backs up data to root sd card directory to db_dump.db file.
+	 */
+	public void BackupDataButtonClicked(View view) {
+		File f=new File("/data/data/hr.fer.zari.waspmote/databases/WaspmoteDB");
+		FileInputStream fis=null;
+		FileOutputStream fos=null;
+
+		try
+		{
+		  fis=new FileInputStream(f);
+		  fos=new FileOutputStream("/mnt/sdcard/db_dump.db");
+		  while(true)
+		  {
+		    int i=fis.read();
+		    if(i!=-1)
+		    {fos.write(i);}
+		    else
+		    {break;}
+		  }
+		  fos.flush();
+		  Toast.makeText(this, "DB dump OK", Toast.LENGTH_SHORT).show();
+		}
+		catch(Exception e)
+		{
+		  e.printStackTrace();
+		  Toast.makeText(this, "DB dump ERROR", Toast.LENGTH_LONG).show();
+		}
+		finally
+		{
+		  try
+		  {
+		    fos.close();
+		    fis.close();
+		  }
+		  catch(IOException ignore)
+		  {
+		  }
+		}
+	}
 
 
 }

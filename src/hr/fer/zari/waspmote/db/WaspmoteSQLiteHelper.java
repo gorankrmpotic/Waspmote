@@ -1,7 +1,5 @@
 package hr.fer.zari.waspmote.db;
 
-import java.io.Serializable;
-
 import hr.fer.zari.waspmote.db.dao.GSNDataSource;
 import hr.fer.zari.waspmote.db.dao.ITableDataSource;
 import hr.fer.zari.waspmote.db.dao.SensorMeasurementDataSource;
@@ -21,7 +19,6 @@ import hr.fer.zari.waspmote.db.tables.SubscriptionTable;
 //import hr.fer.zari.waspmote.db.tables.SensorMeasurementTable;
 //import hr.fer.zari.waspmote.db.tables.SensorsTable;
 import hr.fer.zari.waspmote.db.tables.UserTable;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -45,7 +42,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class WaspmoteSQLiteHelper extends SQLiteOpenHelper{
 
 
-	private static final int DATABASE_VERSION = 14;
+	private static final int DATABASE_VERSION = 15;
 	public static final String DATABASE_NAME = "WaspmoteDB";
 
 	public WaspmoteSQLiteHelper(Context context) {

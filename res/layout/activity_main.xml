@@ -83,11 +83,21 @@
         android:onClick="SubscriptionButtonClicked"/>
     
     <Button
-        android:id="@+id/DeleteDataButton"
+        android:id="@+id/BackupDataButton"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/SubscriptionButton"
+        android:layout_marginTop="30dp"
+        android:text="@string/BackupData" 
+        android:onClick="BackupDataButtonClicked"/>
+    
+    <Button
+        android:id="@+id/DeleteDataButton"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/BackupDataButton"
         android:layout_marginTop="30dp"
         android:text="@string/DeleteData" 
         android:onClick="DeleteDataButtonClicked"/>

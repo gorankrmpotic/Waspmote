@@ -57,6 +57,35 @@ public class ServiceData implements Serializable {
 		return false;
 	}
 	
+	public boolean containsExternalUsbSensors()
+	{
+		for(Sensors sens : sensors)
+		{
+			if(sens.getSensorType() == 3)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Returs a list of {@link Sensors} from service data.
+	 * @return List<Sensors>
+	 */
+	public List<Sensors> getExternalUsbSensors()
+	{
+		List<Sensors> extUsb = new ArrayList<Sensors>();
+		for(Sensors sens : sensors)
+		{
+			if(sens.getSensorType() == 3)
+			{
+				extUsb.add(sens);
+			}
+		}
+		return extUsb;
+	}
+	
 	public List<Sensors> getInternalSensors()
 	{
 		List<Sensors> intSens = new ArrayList<Sensors>();

@@ -62,6 +62,7 @@
     <string name="CreateSubscription2">Create</string>
     <string name="CancelSubscription">Cancel</string>
     <string name="DeleteData">Delete Data</string>
+    <string name="BackupData">Bacup data to SD</string>
 
     <string-array name="baud_rate">
         <item>300</item>

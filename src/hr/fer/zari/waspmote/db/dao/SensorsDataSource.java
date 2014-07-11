@@ -90,6 +90,23 @@ public class SensorsDataSource implements ITableDataSource{
 		return null;
 	}
 	
+	public Integer getSensorIdByName(String sensorName)
+	{
+		if(SensorExists(sensorName))
+		{
+			this.open();
+			Cursor cursor = database.query(SensorsTable.TABLE_SENSORS, SensorsTable.COLUMNS, SensorsTable.COLUMN_SENSOR_NAME+" = ?", new String[]{sensorName}, null, null, null);
+			if(cursor != null)
+			{
+				cursor.moveToFirst();
+			}
+			Sensors sens = new Sensors(Integer.parseInt(cursor.getString(0)), cursor.getString(1),Integer.parseInt(cursor.getString(2)));
+			this.close();
+			return sens.get_id();
+		}
+		return null;
+	}
+	
 	public Sensors getSensorById(int sensorId)
 	{
 		this.open();

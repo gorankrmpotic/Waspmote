@@ -2,6 +2,7 @@ package hr.fer.zari.waspmote.services;
 
 import hr.fer.zari.waspmote.WaspmoteApplication;
 import hr.fer.zari.waspmote.db.dao.SensorMeasurementDataSource;
+import hr.fer.zari.waspmote.db.dao.SensorsDataSource;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,8 +20,14 @@ import com.ftdi.j2xx.FT_Device;
 
 /**
  * Zadatak ovog servisa je očitavati podatke sa senzora po definiranim
- * kriterijima, te ih zapisivati u bazu. Ovaj servis jednom pokrenut ostaje
- * upogonjen neovisno o UI dretvi aplikacije.
+ * kriterijima, te ih zapisivati u bazu.Ovaj servis je striktno razvijen za
+ * prikupljanje podataka s usb senzora i trenutno nije u uporabi. Trenutno se
+ * koristi samo servis SensorMeasurementsService za očitavanje i spremanje
+ * podataka.
+ * <p>
+ * Servis radi tako da pokrene zasebnu dretvu koja periodički čita podatke s usb
+ * sučelja i putem servisovog handler objekta šalje tom servisu prazne poruke. Servisov handler reagira na poruke tako da pročita broj podataka na ulazu koji je odredila pozadinska dretva i 
+ * </p>
  * 
  * @author Igor Petkovski
  * @version 1.0
@@ -32,8 +39,10 @@ public class MeasurementService extends Service {
 	private Context usbDeviceContext;
 	private D2xxManager ftdid2xx;
 	private FT_Device ftDev = null;
+	private int ftDevId;
 	private int openIndex;
 	private int currentIndex = -2;
+	private int sleepTime = 1000;
 
 	/* read thread variables */
 	public static final int readLength = 512;
@@ -45,6 +54,7 @@ public class MeasurementService extends Service {
 	public readThread read_thread;
 
 	boolean uart_configured = false;
+	boolean idIsConfigured = false;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -90,8 +100,8 @@ public class MeasurementService extends Service {
 	}
 
 	/**
-	 * Spaja se na USB uređaj, ispisuje odgovarajuću poruku u slučaju
-	 * neuspjeha i pokreće pozadinsku dretvu za čitanje s USB-a.
+	 * Spaja se na USB uređaj, ispisuje odgovarajuću poruku u slučaju neuspjeha
+	 * i pokreće pozadinsku dretvu za čitanje s USB-a.
 	 */
 	public void connectFunction() {
 
@@ -131,19 +141,16 @@ public class MeasurementService extends Service {
 					D2xxManager.FT_STOP_BITS_1, D2xxManager.FT_PARITY_NONE);
 			ftDev.setFlowControl(D2xxManager.FT_FLOW_NONE, (byte) 0x0b,
 					(byte) 0x0d);
-
 			uart_configured = true;
 
 			// start read thread
 			if (false == bReadThreadGoing) {
 				read_thread = new readThread(handler);
+				bReadThreadGoing = true;
 				read_thread.start();
 				Toast.makeText(this, "S read thread started ",
 						Toast.LENGTH_SHORT).show();
-
-				bReadThreadGoing = true;
 			}
-
 		} else {
 			Toast.makeText(usbDeviceContext,
 					"S open device port(" + tmpProtNumber + ") NG",
@@ -152,27 +159,42 @@ public class MeasurementService extends Service {
 	}
 
 	/**
-	 * Handler koji prima poruke iz pozadinske dretve za čitanje i
-	 * zapisuje primljenje podatke u bazu podataka.
+	 * Handler koji prima poruke iz pozadinske dretve za čitanje i zapisuje
+	 * primljenje podatke u bazu podataka.
 	 */
 	Handler handler = new Handler() {
 
 		WaspmoteApplication waspApp;
 		SensorMeasurementDataSource sensorMeasurementData;
-		
+
 		@Override
 		public void handleMessage(Message msg) {
-			
-			//Toast.makeText(MeasurementService.this,	"S handler: " + String.valueOf(msg.arg1),Toast.LENGTH_SHORT).show();
-
 			if (iavailable > 0) {
-				//Toast.makeText(MeasurementService.this,	String.copyValueOf(readDataToText, 0, iavailable),
-				//		Toast.LENGTH_SHORT).show();
-				waspApp = (WaspmoteApplication)getApplication();
-				sensorMeasurementData = (SensorMeasurementDataSource) waspApp.getWaspmoteSqlHelper().getSensorMeasurementDataSource(MeasurementService.this);		
-				
-				sensorMeasurementData.addSensorMeasurement(1, System.currentTimeMillis(), String.copyValueOf(readDataToText, 0, iavailable), "N/A");
-			}	
+				if (idIsConfigured) {
+					waspApp = (WaspmoteApplication) getApplication();
+					sensorMeasurementData = (SensorMeasurementDataSource) waspApp
+							.getWaspmoteSqlHelper()
+							.getSensorMeasurementDataSource(
+									MeasurementService.this);
+					String data = String.copyValueOf(readDataToText, 0,
+							iavailable);
+
+					data = data.split("!moteid!")[2];
+					data = data.trim();
+					if (data.endsWith("!end!")) {
+						data = data.replace("!end!", " ");
+						data = data.trim();
+					}
+					// Toast.makeText(getApplicationContext(), data,
+					// Toast.LENGTH_SHORT).show();
+					sensorMeasurementData.addSensorMeasurement(ftDevId,
+							System.currentTimeMillis(), data, "N/A");
+				} else {
+					configureId(String.copyValueOf(readDataToText, 0,
+							iavailable));
+				}
+
+			}
 		}
 
 	};
@@ -184,6 +206,11 @@ public class MeasurementService extends Service {
 		currentIndex = -2;
 		bReadThreadGoing = false;
 
+		try {
+			Thread.sleep(sleepTime);
+		} catch (InterruptedException ignore) {
+		}
+
 		if (ftDev != null) {
 			synchronized (ftDev) {
 				if (true == ftDev.isOpen()) {
@@ -194,7 +221,7 @@ public class MeasurementService extends Service {
 				}
 				ftDev = null;
 			}
-			
+
 		}
 	}
 
@@ -214,7 +241,7 @@ public class MeasurementService extends Service {
 				stopSelf();
 			}
 		}
-		
+
 	};
 
 	private class readThread extends Thread {
@@ -231,9 +258,12 @@ public class MeasurementService extends Service {
 			ftDev.purge((D2xxManager.FT_PURGE_TX));
 			ftDev.restartInTask();
 
+			Message msg = threadHandler.obtainMessage();
+			threadHandler.sendMessage(msg);
+
 			while (true == bReadThreadGoing) {
 				try {
-					Thread.sleep(500);
+					Thread.sleep(sleepTime);
 				} catch (InterruptedException ignore) {
 				}
 
@@ -247,13 +277,36 @@ public class MeasurementService extends Service {
 						for (i = 0; i < iavailable; i++) {
 							readDataToText[i] = (char) readData[i];
 						}
-						Message msg = threadHandler.obtainMessage();
+						msg = threadHandler.obtainMessage();
 						threadHandler.sendMessage(msg);
 					}
 				}
 			}
 		}
+	}
 
+	private void configureId(String sensorName) {
+		if ((sensorName.length() > 25) & sensorName.startsWith("!moteid!")) {
+
+			sensorName = sensorName.substring(8);
+			sensorName = sensorName.substring(0, sensorName.indexOf('!'));
+
+			WaspmoteApplication waspApp = (WaspmoteApplication) getApplication();
+			SensorsDataSource sensors = (SensorsDataSource) waspApp
+					.getWaspmoteSqlHelper().getSensorsDataSource(this);
+
+			if (!sensors.SensorExists(sensorName)) {
+				sensors.addSensor(sensorName, 3);
+				Toast.makeText(this,
+						"Sensor: " + sensorName + " is NOT registered!",
+						Toast.LENGTH_SHORT).show();
+			} else {
+				ftDevId = sensors.getSensorIdByName(sensorName);
+				Toast.makeText(this, "Sensor id is: " + ftDevId + " !",
+						Toast.LENGTH_SHORT).show();
+			}
+			idIsConfigured = true;
+		}
 	}
 
 }

@@ -124,6 +124,6 @@ public class PlotActivity extends Activity {
 		return new ArrayList<Date>();
 	}
 
-
+	
 
 }
