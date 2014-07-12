@@ -112,7 +112,7 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 		}
 
 		// zovem servis za pracenje usb podataka ako vec nije pokrenut
-		
+		/*
 		if (isMyServiceRunning(MeasurementService.class)) {
 			Toast.makeText(this, "USB service running", Toast.LENGTH_SHORT)
 					.show();
@@ -130,7 +130,7 @@ public class ViewUsbSensorDataActivity extends ActionBarActivity {
 				}
 			}
 		}
-		
+		*/
 
 		// * Inflate layout *
 		readData = new byte[readLength];

@@ -50,7 +50,7 @@ public class SubscriptionDataSource implements ITableDataSource{
 		this.close();
 	}
 	
-	//mislim da æe bit samo 1
+	// trenutno splikscija radi samo s jednim subscriptionom
 	public List<Subscription> getAllSubscriptions()
 	{
 		List<Subscription> listSubscriptions = new LinkedList<Subscription>();

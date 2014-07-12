@@ -43,7 +43,7 @@ public class StartActivity extends ActionBarActivity {
 		UserDataSource userData =(UserDataSource) waspApp.getWaspmoteSqlHelper().getUserDataSource(this);
 		SensorTypeDataSource sensorTypeData = (SensorTypeDataSource) waspApp.getWaspmoteSqlHelper().getSensorTypeDataSource(this);
 		SensorsDataSource sensorsData = (SensorsDataSource) waspApp.getWaspmoteSqlHelper().getSensorsDataSource(this);
-		//ovo je potrebno ako korisnik obriše sve accounte neæe moæ koristiti nijedan admin account
+		//ovo je potrebno ako korisnik obriï¿½e sve accounte neï¿½e moï¿½ koristiti nijedan admin account
 		
 		userData.addUser("admin", "administrator", "admin", "admin");
 		sensorTypeData.addSensorType("Internal");
@@ -121,7 +121,7 @@ public class StartActivity extends ActionBarActivity {
 	
 	public void ExitButtonClicked(View view)
 	{
-		System.exit(0);
+		this.finish();
 	}
 
 }

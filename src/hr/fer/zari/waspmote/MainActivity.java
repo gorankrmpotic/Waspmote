@@ -37,8 +37,6 @@ public class MainActivity extends ActionBarActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		setTitle(getString(R.string.app_name));
-		
-		//copyDB();
 				
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
@@ -48,7 +46,7 @@ public class MainActivity extends ActionBarActivity{
 		waspApp = (WaspmoteApplication)getApplication();
 		subscriptionData = (SubscriptionDataSource) waspApp.getWaspmoteSqlHelper().getSubscriptionDataSource(this);
 		
-		//provjera dal je user guest!
+		//provjera dal je user guest i miče opcije koje nebi smio vidjeti
 		if(waspApp.getCurrentUser() == null)
 		{
 			Button adminButton = (Button) findViewById(R.id.AdministrationButton);
@@ -154,7 +152,6 @@ public class MainActivity extends ActionBarActivity{
 
 	@Override
 	public void onBackPressed() {
-		// TODO Auto-generated method stub		
 		AlertDialog.Builder backWarning = new AlertDialog.Builder(MainActivity.this);
 		backWarning.setTitle("Warning");
 		backWarning.setMessage("Are you sure you want to log out?");
@@ -163,7 +160,6 @@ public class MainActivity extends ActionBarActivity{
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
 				waspApp.logOut();
 				goBack();
 			}
@@ -180,7 +176,6 @@ public class MainActivity extends ActionBarActivity{
 
 	@Override
 	protected void onPostResume() {
-		// TODO Auto-generated method stub
 		if(subscriptionData.getAllSubscriptions().size() > 0)
 		{
 			Button externalSensButton = (Button) findViewById(R.id.ExternalSensorButton);
