@@ -2,13 +2,11 @@ package hr.fer.zari.waspmote;
 
 import hr.fer.zari.waspmote.db.dao.SensorTypeDataSource;
 import hr.fer.zari.waspmote.db.dao.SensorsDataSource;
-import hr.fer.zari.waspmote.models.Sensors;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 import android.app.AlertDialog;
@@ -31,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class ExternalSensorActivity extends ActionBarActivity {
 
@@ -162,12 +159,11 @@ public class ExternalSensorActivity extends ActionBarActivity {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
 				Object[] deviceName = mAdapter.getItem(which).keySet().toArray();
 				String deviceNameString = deviceName[0].toString();
 				Object[] deviceMac = mAdapter.getItem(which).values().toArray();
 				String deviceMacString = deviceMac[0].toString();
-				Boolean same = false;
+				//Boolean same = false;
 				//dohvatio sam uredaj!!
 				
 				if(sensorDevice != null)

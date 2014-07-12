@@ -121,6 +121,10 @@ public class StartActivity extends ActionBarActivity {
 	
 	public void ExitButtonClicked(View view)
 	{
+		/*
+		 *  u androidu se nikad program ne prekida s naredbom System.exit(0) jer izaziva
+		 *   nepredvidjeno ponasanje
+		 */
 		this.finish();
 	}
 

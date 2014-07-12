@@ -158,4 +158,6 @@
         <item>2</item>
     </string-array>
 
+    <string name="title_activity_list_sensors_database_data">ListSensorsDatabaseDataActivity</string>
+
 </resources>

@@ -52,7 +52,7 @@ public class SensorMeasurementService extends Service implements
 	InputStream inStream = null;
 	List<SensorMeasurement> sensorMeasurementsToWrite = new ArrayList<SensorMeasurement>();
 	static SensorManager mgr;
-	ServiceData sd;
+	static ServiceData sd;
 	final Handler handler = new Handler();
 	SensorMeasurementDataSource sensorMeasurementData;
 	WaspmoteApplication waspApp;
@@ -79,14 +79,15 @@ public class SensorMeasurementService extends Service implements
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		// return super.onStartCommand(intent, flags, startId);
-		sd = (ServiceData) intent.getExtras().getSerializable("ServiceData");
+		if (null != intent.getExtras().getSerializable("ServiceData")) {
+			sd = (ServiceData) intent.getExtras().getSerializable("ServiceData");			
+		}
 		waspApp = (WaspmoteApplication) getApplication();
 		sensorMeasurementData = (SensorMeasurementDataSource) waspApp
 				.getWaspmoteSqlHelper().getSensorMeasurementDataSource(this);
@@ -165,8 +166,9 @@ public class SensorMeasurementService extends Service implements
 				e.printStackTrace();
 			}
 			connectToUsb();
-	
-			configureUart();
+			if (connected) {
+				configureUart();
+			}
 			//Toast.makeText(this, "ftDev = " + ftDev, Toast.LENGTH_SHORT).show();
 		} else {
 			closeUsbDevice();
@@ -175,9 +177,9 @@ public class SensorMeasurementService extends Service implements
 		if (!sd.containsExternalBluetoothSensors()) {
 			doWork();
 		}
-		return START_REDELIVER_INTENT;
+		return START_STICKY;
 	}
-
+ 
 	@Override
 	public void onDestroy() {
 		handler.removeCallbacks(null);
@@ -204,9 +206,9 @@ public class SensorMeasurementService extends Service implements
 			}
 			connectionSocket = null;
 		}
-
 		closeUsbDevice();
-
+		
+		Toast.makeText(this, "SensorMeasurement service killed", Toast.LENGTH_SHORT).show();
 		Log.w("SensorMeasurementService", "Service killed");
 		super.onDestroy();
 	}
@@ -289,7 +291,7 @@ public class SensorMeasurementService extends Service implements
 			}
 		}
 		// procitaj podatak i zapisi ga u bazu
-		if (sd.containsExternalUsbSensors()) {
+		if (sd.containsExternalUsbSensors() & connected) {
 
 			if (ftDev.isOpen()) {
 				// Toast.makeText(getApplicationContext(), "pocetak: " + times +

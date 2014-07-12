@@ -20,10 +20,11 @@ import android.os.IBinder;
 import android.support.v4.util.TimeUtils;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 public class GsnService extends Service {
 
-	ServiceData sd;
+	static ServiceData sd;
 	WaspmoteApplication waspApp;
 	SensorMeasurementDataSource sensorMeasurementData;
 	String gsnIp;
@@ -43,10 +44,11 @@ public class GsnService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		// TODO Auto-generated method stub
 //		return super.onStartCommand(intent, flags, startId);
 		Log.d("GsnService", "Gsn service start");
-		sd = (ServiceData) intent.getExtras().getSerializable("ServiceData");
+		if (null != intent.getExtras().getSerializable("ServiceData")) {
+			sd = (ServiceData) intent.getExtras().getSerializable("ServiceData");
+		}
 		waspApp = (WaspmoteApplication)getApplication();
 		sensorMeasurementData = (SensorMeasurementDataSource) waspApp.getWaspmoteSqlHelper().getSensorMeasurementDataSource(this);
 		gsnIp = sd.getGsnIp();
@@ -57,18 +59,17 @@ public class GsnService extends Service {
 	    deviceID = tm.getDeviceId();
 		doWork();	
 				
-		return START_REDELIVER_INTENT;
+		return START_STICKY;
 	}
 
 	@Override
 	public void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
 		handler.removeCallbacks(null);
 		handler.removeCallbacksAndMessages(null);
 		
-		
+		Toast.makeText(this, "GSN service killed", Toast.LENGTH_SHORT).show();
 		Log.w("GsnService", "Service killed");
+		super.onDestroy();
 	}
 	
 	public void doWork()
@@ -171,7 +172,6 @@ public class GsnService extends Service {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				doWork();
 			}
 			
@@ -179,8 +179,4 @@ public class GsnService extends Service {
 		}, TimeUnit.SECONDS.toMillis(10));
 	}
 	
-	
-	
-	
-
 }

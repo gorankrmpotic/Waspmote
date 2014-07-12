@@ -13,6 +13,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class SensorsDataSource implements ITableDataSource{
 
@@ -37,6 +38,19 @@ public class SensorsDataSource implements ITableDataSource{
 	{
 		this.open();
 		Cursor cursor = database.query(SensorsTable.TABLE_SENSORS, SensorsTable.COLUMNS, SensorsTable.COLUMN_SENSOR_NAME+" = ?", new String[]{sensorName}, null, null, null);
+		if(cursor.getCount() == 0)
+		{
+			this.close();
+			return false;
+		}		
+		this.close();
+		return true;
+	}
+	
+	public boolean SensorIdExists(Integer sensorId)
+	{
+		this.open();
+		Cursor cursor = database.query(SensorsTable.TABLE_SENSORS, SensorsTable.COLUMNS, SensorsTable.COLUMN_ID+" = ?", new String[]{sensorId.toString()}, null, null, null);
 		if(cursor.getCount() == 0)
 		{
 			this.close();
@@ -103,6 +117,24 @@ public class SensorsDataSource implements ITableDataSource{
 			Sensors sens = new Sensors(Integer.parseInt(cursor.getString(0)), cursor.getString(1),Integer.parseInt(cursor.getString(2)));
 			this.close();
 			return sens.get_id();
+		}
+		return null;
+	}
+	
+	public String getSensorNameById(Integer sensorId)
+	{
+		if(SensorIdExists(sensorId))
+		{
+			this.open();
+			Cursor cursor = database.query(SensorsTable.TABLE_SENSORS, SensorsTable.COLUMNS, SensorsTable.COLUMN_ID+" = ?", new String[]{sensorId.toString()}, null, null, null);
+			if(cursor != null)
+			{
+				cursor.moveToFirst();
+			}
+			String name = cursor.getString(1);
+			this.close();
+			//Log.d(TAG, name);
+			return name;
 		}
 		return null;
 	}

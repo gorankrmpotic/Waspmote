@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.ftdi.j2xx.D2xxManager;
 import com.ftdi.j2xx.D2xxManager.D2xxException;
@@ -21,6 +22,8 @@ import com.ftdi.j2xx.FT_Device;
  * uređaja. <b>Trenutno ne prikazuje sve spojene uređaje već samo prvi.</b> Ovo
  * dakako u sljedećim verzijama treba promijeniti. 
  * <p>
+ * Kod izlistavanja senzora ispisuje se serijski broj USB uređaja, čisto iz razloga
+ * što je u tom slučaju kod daleko jednostavniji.
  * Prilikom izlaska uništava sve ostvarene veze sa spojenim uređajem i tako
  * omogućava nesmetani rad ostatka aplikacije.
  * </p>
@@ -106,7 +109,7 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 				ftDev = ftdid2xx.openByIndex(usbDeviceContext, DevCount - 1);
 				//Toast.makeText(this, "Opening device = " + ftDev.getDeviceInfo().serialNumber, Toast.LENGTH_SHORT).show();
 			} else {
-				//Toast.makeText(this, "No devices found!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "No devices found!", Toast.LENGTH_SHORT).show();
 				onBackPressed();
 			}
 		}
@@ -122,6 +125,7 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 		            //Toast.makeText(ListUsbSensorsActivity.this, "Pos. clocked: "+ i, Toast.LENGTH_LONG).show();
 		            Intent intent = new Intent(av.getContext(), ViewUsbSensorDataActivity.class);
 		            intent.putExtra("ClickedUsbIndex", i);
+		            /*
 		            ListUsbSensorsActivity.this.runOnUiThread(new Runnable() {
 	
 						@Override
@@ -129,6 +133,8 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 							closeUsbDevice();
 						}
 					});
+					*/
+		            closeUsbDevice();
 		            startActivity(intent);
 		        }
 		    });
@@ -162,7 +168,7 @@ public class ListUsbSensorsActivity extends ActionBarActivity {
 			{
 				if(true == ftDev.isOpen())
 				{
-					//Toast.makeText(this, "Closing usb device connection", Toast.LENGTH_SHORT).show();
+					Toast.makeText(this, "Closing usb device connection", Toast.LENGTH_SHORT).show();
 					Log.d(TAG, "Closing usb device connection.");
 					ftDev.close();
 					ftDev = null;

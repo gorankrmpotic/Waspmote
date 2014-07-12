@@ -1,7 +1,6 @@
 package hr.fer.zari.waspmote;
 
 import hr.fer.zari.waspmote.db.dao.SensorsDataSource;
-import hr.fer.zari.waspmote.services.MeasurementService;
 
 import java.util.ArrayList;
 

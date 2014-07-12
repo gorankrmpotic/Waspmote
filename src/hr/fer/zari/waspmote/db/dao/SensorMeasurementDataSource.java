@@ -4,7 +4,6 @@ import hr.fer.zari.waspmote.db.WaspmoteSQLiteHelper;
 import hr.fer.zari.waspmote.db.tables.SensorMeasurementTable;
 import hr.fer.zari.waspmote.models.SensorMeasurement;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,14 +12,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Parcelable;
+import android.util.Log;
 
 public class SensorMeasurementDataSource implements ITableDataSource{
 
-	private static final String TAG = "SensorMeasurementDataSource";
+	static final String TAG = "SensorMeasurementDataSource";
 	private SQLiteDatabase database;
 	private WaspmoteSQLiteHelper dbHelper;
-	private String[] allColumns = SensorMeasurementTable.COLUMNS;
+	public String[] allColumns = SensorMeasurementTable.COLUMNS;
 	
 	
 	public SensorMeasurementDataSource(Context context)
@@ -71,6 +70,31 @@ public class SensorMeasurementDataSource implements ITableDataSource{
         }
 		this.close();
 		return listMeasurements;
+	}
+	
+	/**
+	 * Vraca popis svih idjeva senzora za koje postoje podaci u tablici izmjerenih podataka.
+	 * @return List<Integer> lista Id-jeva
+	 */
+	public List<Integer> getAllSensorIds()
+	{
+		List<Integer> listSensorIds = new LinkedList<Integer>();
+		Integer sensorId = -1;
+		String query = "SELECT " + SensorMeasurementTable.COLUMN_ID_SENSOR + " FROM " + SensorMeasurementTable.TABLE_SENSOR_MEASUREMENT;
+		this.open();
+		Cursor cursor = database.rawQuery(query, null);
+		if (cursor.moveToFirst()) {
+            do {          	
+            	sensorId = Integer.parseInt(cursor.getString(0));
+            	if (sensorId>0 & !listSensorIds.contains(sensorId)) {
+            		listSensorIds.add(sensorId);
+            		Log.d(TAG, sensorId.toString());
+            	}
+            } while (cursor.moveToNext());
+        }
+		this.close();
+		Log.d(TAG, "getAllSensorIds");
+		return listSensorIds;
 	}
 	
 	public List<SensorMeasurement> getAllSensorMeasurementByTimestamp(long timestamp)

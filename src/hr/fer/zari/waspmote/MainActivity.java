@@ -133,7 +133,7 @@ public class MainActivity extends ActionBarActivity{
 	
 	public void PlotSensorData(View view)
 	{
-		Intent PlotActivityIntent = new Intent(this, PlotActivity.class);
+		Intent PlotActivityIntent = new Intent(this, ListSensorsDatabaseDataActivity.class);
 		startActivity(PlotActivityIntent);		
 	}
 	
