@@ -16,7 +16,7 @@
     <uses-feature android:name="android.hardware.usb.host" />
 
     <uses-sdk
-        android:minSdkVersion="16"
+        android:minSdkVersion="19"
         android:targetSdkVersion="19" />
 
     <application

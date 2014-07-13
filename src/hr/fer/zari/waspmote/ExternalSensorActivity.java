@@ -108,10 +108,32 @@ public class ExternalSensorActivity extends ActionBarActivity {
 		if(!bluetooth.isEnabled())
 		{
 			bluetooth.enable();
-			ButtonVisible();
+			BroadcastReceiver receiver = new BroadcastReceiver() {
+				
+				@Override
+				public void onReceive(Context context, Intent intent) {
+					// TODO Auto-generated method stub
+					String action = intent.getAction();
+					if(action.equals(BluetoothAdapter.ACTION_STATE_CHANGED))						
+					{
+						final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
+						if(state == BluetoothAdapter.STATE_ON)
+						{
+							ButtonVisible();
+							SearchForDevices();
+						}
+					}
+				}
+			};
+			IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+			registerReceiver(receiver, filter);
+			//ButtonVisible();
 		}
 		//traži uređaje koji su u blizini i omogući korisniku spajanje :D
-		SearchForDevices();
+		else
+		{
+			SearchForDevices();
+		}
 	}
 	
 	public void SearchForDevices()
@@ -190,8 +212,8 @@ public class ExternalSensorActivity extends ActionBarActivity {
 				
 				try
 				{
-		            
-		            MakeConnectionAndStreams();
+		            PairDevices();
+		            //MakeConnectionAndStreams();
 		            connected = true;
 		            
 		            ChangeCloseConnectionButtonVisibility();
@@ -227,6 +249,7 @@ public class ExternalSensorActivity extends ActionBarActivity {
 	
 	public void MakeConnectionAndStreams()
 	{
+		adDevices.cancel();
 		try
 		{
 			if(connectionSocket != null)
@@ -246,6 +269,9 @@ public class ExternalSensorActivity extends ActionBarActivity {
 	        }
 	        catch(Exception ex)
 	        {
+	        	connected = false;
+	        	ChangeCloseConnectionButtonVisibility();
+				ChangeGetButtonVisibility();
 	        	connectionSocket.close();
 	        	inStream.close();
 	        	outStream.close();
@@ -258,12 +284,45 @@ public class ExternalSensorActivity extends ActionBarActivity {
 		}
 		catch(Exception ex)
 		{
+			connected = false;
+        	ChangeCloseConnectionButtonVisibility();
+			ChangeGetButtonVisibility();
 			AlertDialog.Builder errorReset = new AlertDialog.Builder(ExternalSensorActivity.this);
 			errorReset.setTitle("Error!");
 			errorReset.setMessage(ex.getMessage());
 			errorReset.setPositiveButton("Ok", null);
 			errorReset.show();
 		}
+	}
+	
+	public void PairDevices()
+	{
+		if(sensorDevice.getBondState() == BluetoothDevice.BOND_BONDED)
+		{
+			MakeConnectionAndStreams();
+			return;
+		}
+		sensorDevice.createBond();
+		BroadcastReceiver pairReceiver = new BroadcastReceiver() {
+			
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				// TODO Auto-generated method stub
+				String action = intent.getAction();
+				if(BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action))
+				{
+					final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
+					final int previousState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
+					
+					if(state == BluetoothDevice.BOND_BONDED && previousState == BluetoothDevice.BOND_BONDING)
+					{
+						MakeConnectionAndStreams();
+					}
+				}
+			}
+		};
+		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+		registerReceiver(pairReceiver, filter);
 	}
 	
 	
