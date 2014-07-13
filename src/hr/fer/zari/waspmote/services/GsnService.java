@@ -59,7 +59,7 @@ public class GsnService extends Service {
 	    deviceID = tm.getDeviceId();
 		doWork();	
 				
-		return START_STICKY;
+		return START_REDELIVER_INTENT;
 	}
 
 	@Override
@@ -175,8 +175,7 @@ public class GsnService extends Service {
 				doWork();
 			}
 			
-			// TODO vrati na staro  TimeUnit.MINUTES.toMillis(period));
-		}, TimeUnit.SECONDS.toMillis(10));
+		}, TimeUnit.MINUTES.toMillis(period));
 	}
 	
 }

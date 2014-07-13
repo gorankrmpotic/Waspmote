@@ -63,6 +63,8 @@
     <string name="CancelSubscription">Cancel</string>
     <string name="DeleteData">Delete Data</string>
     <string name="BackupData">Bacup data to SD</string>
+    <string name="title_activity_list_sensors_database_data">Sensors with measurement data</string>
+    <string name="title_activity_list_sensors_data_type">Sensor measurement data types</string>
 
     <string-array name="baud_rate">
         <item>300</item>
@@ -158,6 +160,6 @@
         <item>2</item>
     </string-array>
 
-    <string name="title_activity_list_sensors_database_data">ListSensorsDatabaseDataActivity</string>
+ 
 
 </resources>

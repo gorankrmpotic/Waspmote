@@ -8,6 +8,10 @@ import java.util.List;
 
 public class ServiceData implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5585641956773450198L;
 	private List<Sensors> sensors;
 	private int period;	
 	private String gsnIp;

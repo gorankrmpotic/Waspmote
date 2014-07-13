@@ -4,6 +4,10 @@ import java.io.Serializable;
 
 public class Sensors implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7734074940393166420L;
 	private int _id;
 	private String sensorName;
 	private int sensorType;

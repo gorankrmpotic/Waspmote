@@ -1,5 +1,13 @@
 package hr.fer.zari.waspmote;
 
+import hr.fer.zari.waspmote.db.dao.SensorMeasurementDataSource;
+import hr.fer.zari.waspmote.db.dao.SensorsDataSource;
+import hr.fer.zari.waspmote.models.SensorMeasurement;
+
+import java.text.FieldPosition;
+import java.text.Format;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -15,30 +23,70 @@ import com.androidplot.xy.PointLabelFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYSeries;
+import com.androidplot.xy.XYStepMode;
 
 public class PlotActivity extends Activity {
 
 	private XYPlot plot;
 	private List<Date> dates;
+	private Number[] series1;
+	private Number[] series2;
+	
+	private int sensorId;
+	private String dataType;
+	private boolean internal;
+	private List<SensorMeasurement> measurements;
+	
+	private WaspmoteApplication waspApp;
+	private SensorsDataSource sensorsDs;
+	private SensorMeasurementDataSource sensorMeasurements;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_plot);
 		
+		waspApp = (WaspmoteApplication) getApplication();
+		sensorsDs = (SensorsDataSource) waspApp.getWaspmoteSqlHelper().getSensorsDataSource(this);
+		sensorMeasurements = (SensorMeasurementDataSource) waspApp
+				.getWaspmoteSqlHelper().getSensorMeasurementDataSource(this);
+		
+		Bundle extras = getIntent().getExtras();
+		if (extras == null) {
+			//Toast.makeText(this, "Unable to comply, exiting.", Toast.LENGTH_SHORT).show();
+		} else {
+			sensorId = extras.getInt("sensorId", 0);
+			measurements = sensorMeasurements.getAllSensorMeasurementBySensorId(sensorId);
+			if (null == extras.getString("dataType", null)) {
+				internal = true;
+			} else {
+				dataType = extras.getString("dataType", null);
+			}
+		}
+		
+		series1 = new Number[measurements.size()];
+		series2 = new Number[measurements.size()];
+		
+		for (int i=0; i<measurements.size(); i++) {
+			series1[i] = measurements.get(i).getTimestamp();
+			if (internal) {
+				series2[i] = Float.parseFloat(measurements.get(i).getValue());
+			} else {
+				series2[i] = parseDataType(measurements.get(i).getValue());
+			}
+		}
+		
 		plot = (XYPlot) findViewById(R.id.plot_sensor_data);
 		
-		Number[] series1Numbers = {1,1,2,2,3,3,4,5,6,10,8,7};
-		Number[] series2Numbers = {1,2,3,4,5,6,7,8,9,10,11,12};
 		//dates = generateDates();
 		
 		// Number[] dateSeries = dates;
 		
 		// Create series and appropriate formatters
-		XYSeries series1 = new SimpleXYSeries(
-				Arrays.asList(series1Numbers),
-				SimpleXYSeries.ArrayFormat.Y_VALS_ONLY,
-				"Vrijednosti");
+		//XYSeries series1 = new SimpleXYSeries(
+			//	Arrays.asList(series1Numbers),
+				//SimpleXYSeries.ArrayFormat.Y_VALS_ONLY,
+				//"Vrijednosti");
 		
 		LineAndPointFormatter series1Format = new LineAndPointFormatter();
         series1Format.setPointLabelFormatter(new PointLabelFormatter());
@@ -46,43 +94,37 @@ public class PlotActivity extends Activity {
             R.xml.line_point_formatter_with_plf1);
         
         
-		XYSeries series2 = new SimpleXYSeries(
-				Arrays.asList(series2Numbers),
-				Arrays.asList(series1Numbers),
-				"Vrijeme");
+		XYSeries series22 = new SimpleXYSeries(
+				Arrays.asList(series1),
+				Arrays.asList(series2),
+				sensorsDs.getSensorById(sensorId).getSensorName());
 		
         LineAndPointFormatter series2Format = new LineAndPointFormatter();
         series2Format.setPointLabelFormatter(new PointLabelFormatter());
         series2Format.configure(getApplicationContext(),
-                R.xml.line_point_formatter_with_plf2);
+                R.xml.line_point_formatter_with_plf3);
         
-        
-        // add a new series' to the xyplot:
-        //plot.addSeries(series1, series1Format);
-        
-        plot.addSeries(series2, series2Format);
+        plot.addSeries(series22, series2Format);
         plot.setDomainLabel("Vrijeme");
         plot.setRangeLabel("Vrijednosti");
         
-        //plot.setDomainStep(XYStepMode.SUBDIVIDE, dates.size());
-        
         // reduce the number of range labels
         plot.setTicksPerRangeLabel(3);
+        plot.setTicksPerDomainLabel(3);
         
-        /*
+        //plot.setRangeStep(XYStepMode.SUBDIVIDE, series1.length);
+        //plot.setDomainStep(XYStepMode.SUBDIVIDE, series2.length);
+        
         plot.setDomainValueFormat(new Format() {
         	 
             // create a simple date format that draws on the year portion of our timestamp
             // see http://download.oracle.com/javase/1.4.2/docs/api/java/text/SimpleDateFormat.html
             // for a full description of SimpleDateFormat.
-            private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy");
+            private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
  
             @Override
             public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
- 
-                // because our timestamps are in seconds and SimpleDateFormat expects milliseconds
-                // we multiply our timestamp by 1000:
-                long timestamp = ((Number) obj).longValue() * 1000;
+                long timestamp = ((Number) obj).longValue();
                 Date date = new Date(timestamp);
                 return dateFormat.format(date, toAppendTo, pos);
             }
@@ -92,7 +134,7 @@ public class PlotActivity extends Activity {
                 return null;
             }
         });
-        */
+        
 	}
 
 	@Override
@@ -114,16 +156,13 @@ public class PlotActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	private List<Date> generateDates() {
-		//DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-		ArrayList<Date> dates = new ArrayList<>();
-		for (int i=0; i<=1000; i+=100) {
-			dates.add(new Date(1078307200+i));
-		}
-		return new ArrayList<Date>();
-	}
 
-	
+	private Double parseDataType(String value) {
+		String separator = "!"+dataType+"!";
+		value = value.substring(value.indexOf(separator));
+		value = value.substring(separator.length());
+		value = value.substring(0, value.indexOf(separator));
+		return Double.parseDouble(value);
+	}
 
 }

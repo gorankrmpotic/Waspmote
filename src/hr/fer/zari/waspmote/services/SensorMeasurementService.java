@@ -74,8 +74,8 @@ public class SensorMeasurementService extends Service implements
 	boolean bReadThreadGoing;
 	boolean uart_configured;
 	boolean connected;
+	boolean usbFirst = true;
 	String data;
-	int times = 0;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -157,7 +157,7 @@ public class SensorMeasurementService extends Service implements
 			}
 		}
 
-		// uspostava veze sa vanjskim usb senzorom
+		// uspostava veze sa usb senzorom
 		if (sd.containsExternalUsbSensors()) {
 			usbDeviceContext = getApplicationContext();
 			try {
@@ -177,7 +177,7 @@ public class SensorMeasurementService extends Service implements
 		if (!sd.containsExternalBluetoothSensors()) {
 			doWork();
 		}
-		return START_STICKY;
+		return START_REDELIVER_INTENT;
 	}
  
 	@Override
@@ -294,16 +294,16 @@ public class SensorMeasurementService extends Service implements
 		if (sd.containsExternalUsbSensors() & connected) {
 
 			if (ftDev.isOpen()) {
-				// Toast.makeText(getApplicationContext(), "pocetak: " + times +
-				// saved, Toast.LENGTH_SHORT).show();
+				// Toast.makeText(getApplicationContext(), "ftDev connected: "
+				// , Toast.LENGTH_SHORT).show();
+				read_thread = new readThread();
+				bReadThreadGoing = true;
+				read_thread.start();
 			} else {
-				// Toast.makeText(getApplicationContext(), "ponovno",
+				// Toast.makeText(getApplicationContext(), "ftDev not connected",
 				// Toast.LENGTH_SHORT).show();
 				connectToUsb();
 			}
-			read_thread = new readThread();
-			bReadThreadGoing = true;
-			read_thread.start();
 
 			/*
 			 * iavailable = ftDev.getQueueStatus();
@@ -326,8 +326,7 @@ public class SensorMeasurementService extends Service implements
 			public void run() {
 				doWork();
 			}
-			// TODO PROMIJENI NA TimeUnit.MINUTES.toMillis(period));
-		}, TimeUnit.SECONDS.toMillis(5));
+		}, TimeUnit.MINUTES.toMillis(period));
 	}
 
 	public void MakeConnection() {
@@ -431,8 +430,14 @@ public class SensorMeasurementService extends Service implements
 		@Override
 		public void run() {
 			int i;
-
-			while (true == bReadThreadGoing & connected) {
+			if(usbFirst) {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+				}
+				usbFirst = false;
+			}
+			while (bReadThreadGoing & connected) {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {

@@ -1,12 +1,12 @@
 package hr.fer.zari.waspmote;
 
-import java.util.List;
-
-import hr.fer.zari.waspmote.db.dao.SensorSubscriptionDataSource;
 import hr.fer.zari.waspmote.db.dao.SubscriptionDataSource;
 import hr.fer.zari.waspmote.models.Subscription;
 import hr.fer.zari.waspmote.services.GsnService;
 import hr.fer.zari.waspmote.services.SensorMeasurementService;
+
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;

@@ -106,6 +106,10 @@
             android:name="hr.fer.zari.waspmote.ListSensorsDatabaseDataActivity"
             android:label="@string/title_activity_list_sensors_database_data" >
         </activity>
+        <activity
+            android:name="hr.fer.zari.waspmote.ListSensorsDataTypeActivity"
+            android:label="@string/title_activity_list_sensors_data_type" >
+        </activity>
     </application>
 
 </manifest>

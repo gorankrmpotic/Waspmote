@@ -97,6 +97,23 @@ public class SensorMeasurementDataSource implements ITableDataSource{
 		return listSensorIds;
 	}
 	
+	public List<SensorMeasurement> getAllSensorMeasurementBySensorId(int sensorId)
+	{
+		List<SensorMeasurement> listMeasurements = new LinkedList<SensorMeasurement>();
+		this.open();
+		Cursor cursor = database.query(SensorMeasurementTable.TABLE_SENSOR_MEASUREMENT, SensorMeasurementTable.COLUMNS, SensorMeasurementTable.COLUMN_ID_SENSOR+" = ?", new String[]{String.valueOf(sensorId)}, null, null, null);
+		SensorMeasurement measure = null;
+		if (cursor.moveToFirst()) {
+            do {          	
+//            	measure = new SensorMeasurement(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), Integer.parseInt(cursor.getString(2)), cursor.getString(3), cursor.getString(4));
+            	measure = new SensorMeasurement(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)), Long.parseLong(cursor.getString(2)), cursor.getString(3), cursor.getString(4));
+            	listMeasurements.add(measure);
+            } while (cursor.moveToNext());
+        }
+		this.close();
+		return listMeasurements;
+	}
+	
 	public List<SensorMeasurement> getAllSensorMeasurementByTimestamp(long timestamp)
 	{
 		List<SensorMeasurement> listMeasurements = new LinkedList<SensorMeasurement>();
