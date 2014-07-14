@@ -57,6 +57,7 @@ public class StartActivity extends ActionBarActivity {
 		{
 			sensorsData.addSensor(s.getName(), sType.get_id());		
 		}
+		sensorsData.addSensor("GPS", sType.get_id());
 		}
 		catch(Exception ex)
 		{

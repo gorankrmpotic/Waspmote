@@ -23,12 +23,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ReceiverCallNotAllowedException;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.hardware.usb.UsbManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -58,6 +62,10 @@ public class SensorMeasurementService extends Service implements
 	WaspmoteApplication waspApp;
 	boolean first = true;
 	Long ts;
+	boolean GPS = false;
+	LocationManager locationManager;
+	LocationListener locationListener;
+	String provider;
 
 	/* usb sensors variables */
 	private Context usbDeviceContext;
@@ -77,6 +85,7 @@ public class SensorMeasurementService extends Service implements
 	boolean usbFirst = true;
 	String data;
 
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
@@ -92,6 +101,12 @@ public class SensorMeasurementService extends Service implements
 		sensorMeasurementData = (SensorMeasurementDataSource) waspApp
 				.getWaspmoteSqlHelper().getSensorMeasurementDataSource(this);
 		period = sd.getPeriod();
+		
+		Criteria criteria = new Criteria();	
+		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+		provider = locationManager.getBestProvider(criteria, true);
+		locationListener = new mServiceLocationListener();
+		locationManager.requestLocationUpdates(provider, 400, 1, locationListener);
 
 		readData = new byte[readLength];
 		readDataToText = new char[readLength];
@@ -108,8 +123,8 @@ public class SensorMeasurementService extends Service implements
 		if (sd.containsExternalBluetoothSensors()) {
 			final Sensors extSensor = sd.getExternalBluetoothSensors().get(0);
 			if (!bluetooth.isEnabled()) {
-				bluetooth.enable();
-			}
+				bluetooth.enable();				
+			}			
 			bluetooth.startDiscovery();
 			BroadcastReceiver recv = new BroadcastReceiver() {
 
@@ -125,7 +140,7 @@ public class SensorMeasurementService extends Service implements
 					}
 					if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED
 							.equals(action)) {
-						MakeConnection();
+						MakeConnection();						
 						doWork();
 					}
 				}
@@ -134,6 +149,7 @@ public class SensorMeasurementService extends Service implements
 			filter.addAction(BluetoothDevice.ACTION_FOUND);
 			filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 			registerReceiver(recv, filter);
+			
 		}
 
 		if (sd.containsInternalSensors()) {
@@ -149,6 +165,10 @@ public class SensorMeasurementService extends Service implements
 				if (intSensNames.contains(sen.getName())) {
 					selectedSensors.add(sen);
 				}
+			}
+			if(intSensNames.contains("GPS"))
+			{
+				GPS = true;
 			}
 			internalSensors = new mSensors(selectedSensors, mgr);
 			for (mSensor sen : internalSensors.getAllSensors()) {
@@ -239,6 +259,19 @@ public class SensorMeasurementService extends Service implements
 								"id: " + String.valueOf(id) + " ts: "
 										+ String.valueOf(ts) + " value: "
 										+ String.valueOf(sen.getSensorValue()));
+					}
+				}
+				if(GPS)
+				{
+					int id = sd.getSensorIdByName("GPS");
+					locationManager.requestLocationUpdates(provider, 400, 1, locationListener);
+					if(locationManager.getLastKnownLocation(provider) == null)
+					{
+						sensorMeasurementData.addSensorMeasurement(id, ts, "!lt!N/A!lt!!lg!N/A!lg!", "N/A");
+					}
+					else
+					{
+						sensorMeasurementData.addSensorMeasurement(id, ts, "!lt!"+Double.toString(locationManager.getLastKnownLocation(provider).getLatitude())+"!lt!!lg!"+Double.toString(locationManager.getLastKnownLocation(provider).getLongitude())+"!lg!", "N/A");
 					}
 				}
 			}
@@ -345,7 +378,8 @@ public class SensorMeasurementService extends Service implements
 				Log.e("SensorMeasurementService", ex.getMessage());
 			}
 		}
-	}
+	}	
+	
 
 	/**
 	 * Otvara vezu prema prvom spojenom usb uredjaju i registrira listener za
@@ -493,6 +527,34 @@ public class SensorMeasurementService extends Service implements
 			}
 		}
 
+	}
+	private class mServiceLocationListener implements LocationListener
+	{
+
+		@Override
+		public void onLocationChanged(Location location) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onProviderEnabled(String provider) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onProviderDisabled(String provider) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 
 }

@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,11 +28,17 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-public class InternalSensorsActivity extends ActionBarActivity implements SensorEventListener {
+public class InternalSensorsActivity extends ActionBarActivity implements SensorEventListener{
 
 	private ListView lw;
 	mSensors intSensors;
 	SensorManager mgr;
+	double longitude = 0;
+	double latitude = 0;
+	String provider;
+	
+	LocationManager locationManager;
+	LocationListener locationListener;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +48,15 @@ public class InternalSensorsActivity extends ActionBarActivity implements Sensor
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
-		}		
-
+		}	
+		Criteria criteria = new Criteria();		
+		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);		
+		provider = locationManager.getBestProvider(criteria, true);
+		locationListener = new mLocationListener();
+		//locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+		//locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+		locationManager.requestLocationUpdates(provider, 400, 1, locationListener);
+		Log.d("TEST", provider);
 		GetAllSensors();
 		FillListViewSensors();
 		  
@@ -48,7 +65,7 @@ public class InternalSensorsActivity extends ActionBarActivity implements Sensor
 	public void GetAllSensors()
   {		
   	mgr = (SensorManager) getSystemService(Context.SENSOR_SERVICE);		
-  	List<Sensor> sensors = mgr.getSensorList(Sensor.TYPE_ALL);   
+  	List<Sensor> sensors = mgr.getSensorList(Sensor.TYPE_ALL);   	
   	intSensors = new mSensors(sensors, mgr);  
   	RegisterListeners();    	  
   }
@@ -108,6 +125,9 @@ public class InternalSensorsActivity extends ActionBarActivity implements Sensor
 			map.put("SensorName", mSens.getSensorName());
 			maps.add(map);
 		}
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("SensorName", "GPS");
+		maps.add(map);
 		String[] from = new String[]{"SensorName"};
 		int[] to = {R.id.SensorNameTextView};
 		SimpleAdapter mAdapter = new SimpleAdapter(this, maps, R.layout.activity_internal_sensors, from, to);
@@ -123,12 +143,33 @@ public class InternalSensorsActivity extends ActionBarActivity implements Sensor
 				{
 					SensorName = value[1].substring(0, value[1].length()-1);
 				}
-				mSensor selectedSensor = intSensors.getSensorByName(SensorName);
-				AlertDialog.Builder adb = new AlertDialog.Builder(InternalSensorsActivity.this);
-				adb.setTitle(selectedSensor.getSensorName()+":");				
-				adb.setMessage(Float.toString(selectedSensor.getSensorValue()));				
-				adb.setPositiveButton("Ok", null);
-				adb.show();    
+				if(SensorName.equals("GPS"))
+				{		
+					locationManager.requestLocationUpdates(provider, 400, 1, locationListener);
+					AlertDialog.Builder adb = new AlertDialog.Builder(InternalSensorsActivity.this);
+					adb.setTitle("GPS:");
+					
+					if(locationManager.getLastKnownLocation(provider) == null)
+					{						
+						adb.setMessage("Not Available");						
+					}
+					else
+					{
+					adb.setMessage("Latitude: "+Double.toString(locationManager.getLastKnownLocation(provider).getLatitude())+"\nLongitude: "+Double.toString(locationManager.getLastKnownLocation(provider).getLongitude()));
+					}					
+					//adb.setMessage("Latitude: "+Double.toString(latitude)+" Longitude: "+Double.toString(longitude));
+					adb.setPositiveButton("Ok", null);
+					adb.show();
+				}
+				else
+				{
+					mSensor selectedSensor = intSensors.getSensorByName(SensorName);				
+					AlertDialog.Builder adb = new AlertDialog.Builder(InternalSensorsActivity.this);
+					adb.setTitle(selectedSensor.getSensorName()+":");				
+					adb.setMessage(Float.toString(selectedSensor.getSensorValue()));				
+					adb.setPositiveButton("Ok", null);
+					adb.show();
+				}
 			}		
 		});
 	}
@@ -143,6 +184,37 @@ public class InternalSensorsActivity extends ActionBarActivity implements Sensor
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// TODO Auto-generated method stub
+		
+	}
+
+	
+
+	private class mLocationListener implements LocationListener
+	{		
+		
+		@Override
+		public void onLocationChanged(Location location) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onProviderEnabled(String provider) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onProviderDisabled(String provider) {
+			// TODO Auto-generated method stub
+			
+		}		
 		
 	}
 
